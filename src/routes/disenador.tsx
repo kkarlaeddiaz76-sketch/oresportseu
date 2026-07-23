@@ -1,12 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Upload, RotateCw, Trash2, Plus, Truck } from "lucide-react";
-import { JerseyCanvas, type Sport, type NeckCut, type View, useObjectUrl } from "@/components/designer/JerseyCanvas";
+import { Upload, RotateCw, Trash2, Plus, Truck, Minus } from "lucide-react";
+import {
+  JerseyCanvas, FONT_OPTIONS,
+  type Sport, type NeckCut, type View, type Category,
+  useObjectUrl,
+} from "@/components/designer/JerseyCanvas";
 import { SizeGuideButton } from "@/components/site/SizeGuide";
 import { waLink } from "@/components/site/WhatsAppButton";
 import { z } from "zod";
@@ -30,6 +34,7 @@ export const Route = createFileRoute("/disenador")({
 });
 
 interface Player { id: string; name: string; number: string; size: string; }
+interface LogoState { x: number; y: number; scale: number } // x,y as % of preview box
 
 const SPORTS: { v: Sport; label: string }[] = [
   { v: "futbol", label: "Fútbol" },
@@ -37,6 +42,12 @@ const SPORTS: { v: Sport; label: string }[] = [
   { v: "beisbol", label: "Béisbol" },
   { v: "softball", label: "Softball" },
   { v: "kickingball", label: "Kickingball" },
+];
+
+const CATEGORIES: { v: Category; label: string; icon: string }[] = [
+  { v: "kids", label: "Niños", icon: "👦" },
+  { v: "women", label: "Dama", icon: "👩" },
+  { v: "men", label: "Hombre", icon: "👨" },
 ];
 
 const KIDS = ["4", "8", "12", "14", "16"];
@@ -47,6 +58,7 @@ function DesignerPage() {
   const [sport, setSport] = useState<Sport>(search.sport ?? "beisbol");
   const [view, setView] = useState<View>("front");
   const [cut, setCut] = useState<NeckCut>("btn2");
+  const [category, setCategory] = useState<Category>("men");
   const [primary, setPrimary] = useState("#000000");
   const [secondary, setSecondary] = useState("#FF0000");
   const [accent, setAccent] = useState("#FFFFFF");
@@ -54,7 +66,55 @@ function DesignerPage() {
   const [playerName, setPlayerName] = useState("PEREZ");
   const [number, setNumber] = useState("23");
   const [fabric, setFabric] = useState<"standard" | "premium">("standard");
+  const [fontFront, setFontFront] = useState(FONT_OPTIONS[0].id);
+  const [fontBack, setFontBack] = useState(FONT_OPTIONS[9].id);
   const { url: logoUrl, set: setLogo } = useObjectUrl();
+
+  // Logo positions per view (percentages of preview area)
+  const [logoPos, setLogoPos] = useState<{ front: LogoState; back: LogoState }>({
+    front: { x: 20, y: 45, scale: 1 },
+    back: { x: 50, y: 20, scale: 1 },
+  });
+  const [logoSelected, setLogoSelected] = useState(false);
+
+  const previewRef = useRef<HTMLDivElement | null>(null);
+  const dragState = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null);
+
+  useEffect(() => { if (!logoUrl) setLogoSelected(false); }, [logoUrl]);
+
+  const currentPos = logoPos[view];
+  const updatePos = (patch: Partial<LogoState>) =>
+    setLogoPos((p) => ({ ...p, [view]: { ...p[view], ...patch } }));
+
+  const onLogoPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!previewRef.current) return;
+    setLogoSelected(true);
+    (e.target as Element).setPointerCapture(e.pointerId);
+    const rect = previewRef.current.getBoundingClientRect();
+    dragState.current = {
+      startX: e.clientX, startY: e.clientY,
+      origX: currentPos.x, origY: currentPos.y,
+    };
+    e.preventDefault();
+    const move = (ev: PointerEvent) => {
+      if (!dragState.current || !previewRef.current) return;
+      const dx = ((ev.clientX - dragState.current.startX) / rect.width) * 100;
+      const dy = ((ev.clientY - dragState.current.startY) / rect.height) * 100;
+      const nx = Math.max(0, Math.min(100, dragState.current.origX + dx));
+      const ny = Math.max(0, Math.min(100, dragState.current.origY + dy));
+      setLogoPos((p) => ({ ...p, [view]: { ...p[view], x: nx, y: ny } }));
+    };
+    const up = () => {
+      dragState.current = null;
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+  };
+
+  const fontFrontFamily = FONT_OPTIONS.find((f) => f.id === fontFront)!.family;
+  const fontBackFamily = FONT_OPTIONS.find((f) => f.id === fontBack)!.family;
 
   // Roster
   const [players, setPlayers] = useState<Player[]>([
@@ -71,9 +131,7 @@ function DesignerPage() {
 
   const addPlayer = () =>
     setPlayers((p) => [...p, { id: crypto.randomUUID(), name: "", number: "", size: "M" }]);
-
   const removePlayer = (id: string) => setPlayers((p) => p.filter((x) => x.id !== id));
-
   const updatePlayer = (id: string, patch: Partial<Player>) =>
     setPlayers((p) => p.map((x) => (x.id === id ? { ...x, ...patch } : x)));
 
@@ -90,8 +148,10 @@ function DesignerPage() {
 
   const total = players.length;
   const freeShip = total >= 10;
+  const catLabel = CATEGORIES.find((c) => c.v === category)?.label ?? "";
+  const quoteMsg = `Hola KitCraft, quiero cotizar un pedido:%0ADeporte: ${sport}%0ACategoría: ${catLabel}%0AEquipo: ${teamName}%0ATela: ${fabric}%0AJugadores: ${total}`;
 
-  const quoteMsg = `Hola KitCraft, quiero cotizar un pedido:%0ADeporte: ${sport}%0AEquipo: ${teamName}%0ATela: ${fabric}%0AJugadores: ${total}`;
+  const logoSizePx = 80 * currentPos.scale;
 
   return (
     <TooltipProvider>
@@ -110,13 +170,13 @@ function DesignerPage() {
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <div className="flex gap-1 rounded-full border border-black p-1">
                 <button
-                  onClick={() => setView("front")}
+                  onClick={() => { setView("front"); setLogoSelected(false); }}
                   className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase ${view === "front" ? "bg-black text-white" : "text-black"}`}
                 >
                   Frente
                 </button>
                 <button
-                  onClick={() => setView("back")}
+                  onClick={() => { setView("back"); setLogoSelected(false); }}
                   className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase ${view === "back" ? "bg-black text-white" : "text-black"}`}
                 >
                   Espalda
@@ -125,27 +185,106 @@ function DesignerPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setView((v) => (v === "front" ? "back" : "front"))}
+                onClick={() => { setView((v) => (v === "front" ? "back" : "front")); setLogoSelected(false); }}
                 className="gap-2 border-black text-black hover:bg-black hover:text-white"
               >
                 <RotateCw className="h-4 w-4" /> Girar
               </Button>
             </div>
-            <div className="rounded-xl bg-gradient-to-b from-neutral-100 to-neutral-200 p-6">
+            <div
+              ref={previewRef}
+              className="relative rounded-xl bg-gradient-to-b from-neutral-100 to-neutral-200 p-6 select-none"
+              onPointerDown={(e) => {
+                if (e.target === e.currentTarget) setLogoSelected(false);
+              }}
+            >
               <JerseyCanvas
                 sport={sport} view={view} cut={cut}
                 primary={primary} secondary={secondary} accent={accent}
                 teamName={teamName} playerName={playerName} number={number}
-                logoUrl={logoUrl}
+                fontFront={fontFrontFamily}
+                fontBack={fontBackFamily}
+                category={category}
               />
+
+              {logoUrl && (
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onPointerDown={onLogoPointerDown}
+                  style={{
+                    position: "absolute",
+                    left: `${currentPos.x}%`,
+                    top: `${currentPos.y}%`,
+                    width: logoSizePx,
+                    height: logoSizePx,
+                    transform: "translate(-50%,-50%)",
+                    cursor: "grab",
+                    touchAction: "none",
+                  }}
+                  className={`rounded ${logoSelected ? "outline outline-2 outline-primary" : "outline-dashed outline-1 outline-black/30 hover:outline-primary"}`}
+                >
+                  <img
+                    src={logoUrl}
+                    alt="Logo equipo"
+                    draggable={false}
+                    style={{ width: "100%", height: "100%", objectFit: "contain", pointerEvents: "none" }}
+                  />
+                  {logoSelected && (
+                    <div
+                      className="absolute -top-9 left-1/2 flex -translate-x-1/2 gap-1 rounded-full border border-black bg-white p-1 shadow"
+                      onPointerDown={(e) => e.stopPropagation()}
+                    >
+                      <button
+                        onClick={() => updatePos({ scale: Math.max(0.3, currentPos.scale - 0.15) })}
+                        className="rounded-full p-1 hover:bg-black hover:text-white"
+                        aria-label="Reducir logo"
+                      >
+                        <Minus className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        onClick={() => updatePos({ scale: Math.min(3, currentPos.scale + 0.15) })}
+                        className="rounded-full p-1 hover:bg-black hover:text-white"
+                        aria-label="Agrandar logo"
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        onClick={() => setLogo(null)}
+                        className="rounded-full p-1 text-primary hover:bg-primary hover:text-white"
+                        aria-label="Eliminar logo"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             <p className="mt-4 text-center text-xs text-black/60">
-              Vista previa aproximada. La producción final se ajusta al patrón elegido.
+              {logoUrl ? "Arrastra el logo sobre la camisa. La posición se guarda por vista (frente/espalda)." : "Vista previa aproximada. La producción final se ajusta al patrón elegido."}
             </p>
           </div>
 
           {/* CONTROLS */}
           <div className="space-y-6">
+            {/* Category */}
+            <Panel title="Categoría / Corte">
+              <div className="grid grid-cols-3 gap-2">
+                {CATEGORIES.map((c) => (
+                  <button
+                    key={c.v}
+                    onClick={() => setCategory(c.v)}
+                    className={`rounded-lg border-2 p-2 text-xs font-bold uppercase transition ${
+                      category === c.v ? "border-primary bg-primary text-white" : "border-black/20 bg-white text-black hover:border-black"
+                    }`}
+                  >
+                    <span className="mr-1 text-base">{c.icon}</span>{c.label}
+                  </button>
+                ))}
+              </div>
+            </Panel>
+
             {/* Sport */}
             <Panel title="Deporte">
               <div className="grid grid-cols-3 gap-2">
@@ -197,6 +336,24 @@ function DesignerPage() {
               </div>
             </Panel>
 
+            {/* Fonts */}
+            <Panel title="Tipografías">
+              <div className="space-y-3">
+                <FontPicker
+                  label="Nombre del Equipo (Frente)"
+                  value={fontFront}
+                  onChange={setFontFront}
+                  sample={teamName || "EQUIPO"}
+                />
+                <FontPicker
+                  label="Jugador & Número (Espalda)"
+                  value={fontBack}
+                  onChange={setFontBack}
+                  sample={`${playerName || "JUGADOR"} 23`}
+                />
+              </div>
+            </Panel>
+
             {/* Text */}
             <Panel title={view === "front" ? "Frente: Nombre del Equipo & Logo" : "Espalda: Jugador & Número"}>
               {view === "front" ? (
@@ -218,9 +375,9 @@ function DesignerPage() {
                       />
                     </label>
                     {logoUrl && (
-                      <button onClick={() => setLogo(null)} className="mt-2 text-xs text-primary underline">
-                        Quitar logo
-                      </button>
+                      <p className="mt-2 text-xs text-black/60">
+                        Arrastra el logo sobre la camisa para reposicionarlo. Toca el logo para escalar o eliminar.
+                      </p>
                     )}
                   </div>
                 </div>
@@ -334,6 +491,7 @@ function DesignerPage() {
               <h3 className="text-xl font-black uppercase">Resumen</h3>
               <dl className="mt-4 space-y-2 text-sm">
                 <Row k="Deporte" v={SPORTS.find((s) => s.v === sport)?.label ?? ""} />
+                <Row k="Categoría" v={catLabel} />
                 <Row k="Equipo" v={teamName || "—"} />
                 <Row k="Tela" v={fabric === "standard" ? "Estándar 170g" : "Premium 280g"} />
                 <Row k="Uniformes" v={String(total)} />
@@ -374,6 +532,36 @@ function ColorField({ label, value, onChange }: { label: string; value: string; 
         <span className="text-xs font-mono">{value.toUpperCase()}</span>
       </div>
     </label>
+  );
+}
+
+function FontPicker({
+  label, value, onChange, sample,
+}: { label: string; value: string; onChange: (v: string) => void; sample: string }) {
+  const selected = FONT_OPTIONS.find((f) => f.id === value)!;
+  return (
+    <div>
+      <Label className="text-xs">{label}</Label>
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger className="mt-1">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {FONT_OPTIONS.map((f) => (
+            <SelectItem key={f.id} value={f.id}>
+              <span style={{ fontFamily: f.family }} className="text-base">{f.label}</span>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <div
+        className="mt-2 truncate rounded-md border border-black/10 bg-neutral-50 px-3 py-2 text-2xl leading-tight text-black"
+        style={{ fontFamily: selected.family }}
+        title={sample}
+      >
+        {sample.toUpperCase().slice(0, 18)}
+      </div>
+    </div>
   );
 }
 

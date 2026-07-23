@@ -3,6 +3,27 @@ import { useMemo, useRef, useState } from "react";
 export type Sport = "futbol" | "basket" | "beisbol" | "softball" | "kickingball";
 export type NeckCut = "crew" | "vneck" | "btn2" | "btn6";
 export type View = "front" | "back";
+export type Category = "kids" | "women" | "men";
+
+export interface FontOption {
+  id: string;
+  label: string;
+  family: string;
+  kind: "script" | "block";
+}
+
+export const FONT_OPTIONS: FontOption[] = [
+  { id: "yellowtail", label: "Script Atlética Fuerte", family: "'Yellowtail', cursive", kind: "script" },
+  { id: "allura", label: "Script Tradicional Béisbol", family: "'Allura', cursive", kind: "script" },
+  { id: "pacifico", label: "Brush Script Moderna", family: "'Pacifico', cursive", kind: "script" },
+  { id: "satisfy", label: "Script Elegante Inclinada", family: "'Satisfy', cursive", kind: "script" },
+  { id: "sacramento", label: "Bold Athletic Script", family: "'Sacramento', cursive", kind: "script" },
+  { id: "bungee", label: "Bloque Octagonal Colegial", family: "'Bungee', sans-serif", kind: "block" },
+  { id: "alfa", label: "Slab Serif Imprenta Gruesa", family: "'Alfa Slab One', serif", kind: "block" },
+  { id: "rye", label: "Retro Spur Serif Vintage", family: "'Rye', serif", kind: "block" },
+  { id: "michroma", label: "Sans-Serif Rectangular Expandida", family: "'Michroma', sans-serif", kind: "block" },
+  { id: "anton", label: "Heavy Athletic Block", family: "'Anton', 'Impact', sans-serif", kind: "block" },
+];
 
 interface Props {
   sport: Sport;
@@ -14,16 +35,27 @@ interface Props {
   teamName: string;
   playerName: string;
   number: string;
-  logoUrl?: string | null;
+  fontFront?: string;
+  fontBack?: string;
+  category?: Category;
 }
 
-// A stylized baseball/soccer jersey silhouette that adapts.
 export function JerseyCanvas({
   sport, view, cut, primary, secondary, accent,
-  teamName, playerName, number, logoUrl,
+  teamName, playerName, number,
+  fontFront = "'Anton', 'Impact', sans-serif",
+  fontBack = "'Anton', 'Impact', sans-serif",
+  category = "men",
 }: Props) {
   const sleeveless = sport === "basket";
   const showBaseballButtons = ["beisbol", "softball", "kickingball"].includes(sport);
+
+  // Silhouette adjust by category
+  const shape = useMemo(() => {
+    if (category === "kids") return { scale: 0.82, tx: 45, waist: 0 };
+    if (category === "women") return { scale: 0.95, tx: 12, waist: 12 }; // slight taper
+    return { scale: 1, tx: 0, waist: 0 };
+  }, [category]);
 
   return (
     <svg
@@ -38,39 +70,36 @@ export function JerseyCanvas({
         </linearGradient>
       </defs>
 
-      {/* Body */}
-      <JerseyShape
-        sleeveless={sleeveless}
-        primary={primary}
-        secondary={secondary}
-        cut={cut}
-      />
-      <rect x="0" y="0" width="500" height="620" fill="url(#shade)" pointerEvents="none" />
-
-      {/* Neck cut */}
-      <NeckCutShape cut={cut} accent={accent} />
-
-      {/* Baseball buttons */}
-      {showBaseballButtons && (cut === "btn2" || cut === "btn6") && (
-        <ButtonsPlacket cut={cut} accent={accent} />
-      )}
-
-      {/* Front / Back content */}
-      {view === "front" ? (
-        <FrontContent teamName={teamName} logoUrl={logoUrl} accent={accent} sleeveless={sleeveless} />
-      ) : (
-        <BackContent playerName={playerName} number={number} accent={accent} />
-      )}
+      <g transform={`translate(${shape.tx} ${(1 - shape.scale) * 310}) scale(${shape.scale})`}>
+        <JerseyShape
+          sleeveless={sleeveless}
+          primary={primary}
+          secondary={secondary}
+          cut={cut}
+          waistTaper={shape.waist}
+        />
+        <rect x="0" y="0" width="500" height="620" fill="url(#shade)" pointerEvents="none" />
+        <NeckCutShape cut={cut} accent={accent} />
+        {showBaseballButtons && (cut === "btn2" || cut === "btn6") && (
+          <ButtonsPlacket cut={cut} />
+        )}
+        {view === "front" ? (
+          <FrontContent teamName={teamName} accent={accent} fontFamily={fontFront} />
+        ) : (
+          <BackContent playerName={playerName} number={number} accent={accent} fontFamily={fontBack} />
+        )}
+      </g>
     </svg>
   );
 }
 
 function JerseyShape({
-  sleeveless, primary, secondary, cut,
-}: { sleeveless: boolean; primary: string; secondary: string; cut: NeckCut }) {
-  // Torso path
+  sleeveless, primary, secondary, cut, waistTaper,
+}: { sleeveless: boolean; primary: string; secondary: string; cut: NeckCut; waistTaper: number }) {
+  void cut;
+  const w = waistTaper;
   const torso =
-    "M 150 110 L 200 90 Q 250 75 300 90 L 350 110 L 380 200 L 400 560 Q 250 590 100 560 L 120 200 Z";
+    `M 150 110 L 200 90 Q 250 75 300 90 L 350 110 L ${380 - w} 200 L ${400 - w} 560 Q 250 590 ${100 + w} 560 L ${120 + w} 200 Z`;
 
   const sleeveLeft = sleeveless
     ? "M 150 110 L 130 190 L 165 200 L 185 130 Z"
@@ -99,7 +128,6 @@ function NeckCutShape({ cut, accent }: { cut: NeckCut; accent: string }) {
       />
     );
   }
-  // Crew / buttons default to rounded collar
   return (
     <path
       d="M 215 92 Q 250 115 285 92 Q 275 130 250 132 Q 225 130 215 92 Z"
@@ -110,8 +138,7 @@ function NeckCutShape({ cut, accent }: { cut: NeckCut; accent: string }) {
   );
 }
 
-function ButtonsPlacket({ cut, accent }: { cut: NeckCut; accent: string }) {
-  // 2-button: only top chest area; NO continuous vertical seam.
+function ButtonsPlacket({ cut }: { cut: NeckCut }) {
   if (cut === "btn2") {
     return (
       <g>
@@ -120,7 +147,6 @@ function ButtonsPlacket({ cut, accent }: { cut: NeckCut; accent: string }) {
       </g>
     );
   }
-  // 6-button full placket: continuous line + 6 buttons
   const buttons = [140, 195, 250, 305, 360, 415];
   return (
     <g>
@@ -133,8 +159,8 @@ function ButtonsPlacket({ cut, accent }: { cut: NeckCut; accent: string }) {
 }
 
 function FrontContent({
-  teamName, logoUrl, accent, sleeveless,
-}: { teamName: string; logoUrl?: string | null; accent: string; sleeveless: boolean }) {
+  teamName, accent, fontFamily,
+}: { teamName: string; accent: string; fontFamily: string }) {
   return (
     <g>
       {teamName && (
@@ -142,7 +168,7 @@ function FrontContent({
           x="250"
           y="290"
           textAnchor="middle"
-          fontFamily="Oswald, Impact, sans-serif"
+          fontFamily={fontFamily}
           fontSize="44"
           fontWeight="800"
           fill="#fff"
@@ -153,23 +179,14 @@ function FrontContent({
           {teamName.toUpperCase().slice(0, 14)}
         </text>
       )}
-      {logoUrl && !sleeveless && (
-        <>
-          <image href={logoUrl} x="85" y="200" width="45" height="45" preserveAspectRatio="xMidYMid meet" />
-          <image href={logoUrl} x="370" y="200" width="45" height="45" preserveAspectRatio="xMidYMid meet" />
-        </>
-      )}
-      {logoUrl && sleeveless && (
-        <image href={logoUrl} x="200" y="360" width="100" height="100" preserveAspectRatio="xMidYMid meet" />
-      )}
       <circle cx="440" cy="230" r="6" fill={accent} />
     </g>
   );
 }
 
 function BackContent({
-  playerName, number, accent,
-}: { playerName: string; number: string; accent: string }) {
+  playerName, number, accent, fontFamily,
+}: { playerName: string; number: string; accent: string; fontFamily: string }) {
   return (
     <g>
       {playerName && (
@@ -177,7 +194,7 @@ function BackContent({
           x="250"
           y="180"
           textAnchor="middle"
-          fontFamily="Oswald, Impact, sans-serif"
+          fontFamily={fontFamily}
           fontSize="30"
           fontWeight="700"
           fill="#fff"
@@ -193,7 +210,7 @@ function BackContent({
           x="250"
           y="400"
           textAnchor="middle"
-          fontFamily="Oswald, Impact, sans-serif"
+          fontFamily={fontFamily}
           fontSize="180"
           fontWeight="900"
           fill="#fff"
