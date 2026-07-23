@@ -16,8 +16,8 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "ORE Sports / KitCraft — Uniformes deportivos personalizados" },
       { name: "description", content: "Diseña tu uniforme deportivo personalizado. Fútbol, Baloncesto, Béisbol, Softball y Kickingball. +500 equipos vestidos en España y Europa." },
-      { property: "og:title", content: "ORE Sports — Made for the win" },
-      { property: "og:description", content: "Configurador interactivo de uniformes deportivos personalizados." },
+      { property: "og:title", content: "ORE Sports / KitCraft — Uniformes deportivos personalizados" },
+      { property: "og:description", content: "Diseña tu uniforme deportivo personalizado. Fútbol, Baloncesto, Béisbol, Softball y Kickingball. +500 equipos vestidos en España y Europa." },
       { property: "og:type", content: "website" },
       { property: "og:image", content: hero.url },
       { name: "twitter:card", content: "summary_large_image" },
