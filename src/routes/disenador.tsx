@@ -584,6 +584,7 @@ function FontPicker({
   label, value, onChange, sample,
 }: { label: string; value: string; onChange: (v: string) => void; sample: string }) {
   const selected = FONT_OPTIONS.find((f) => f.id === value)!;
+  const cats: FontCategory[] = ["mode", "script", "ore"];
   return (
     <div>
       <Label className="text-xs">{label}</Label>
@@ -591,11 +592,18 @@ function FontPicker({
         <SelectTrigger className="mt-1">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
-          {FONT_OPTIONS.map((f) => (
-            <SelectItem key={f.id} value={f.id}>
-              <span style={{ fontFamily: f.family }} className="text-base">{f.label}</span>
-            </SelectItem>
+        <SelectContent className="max-h-80">
+          {cats.map((cat) => (
+            <div key={cat}>
+              <div className="sticky top-0 bg-black px-2 py-1 text-[10px] font-black uppercase tracking-widest text-primary">
+                {FONT_CATEGORY_LABEL[cat]}
+              </div>
+              {FONT_OPTIONS.filter((f) => f.category === cat).map((f) => (
+                <SelectItem key={f.id} value={f.id}>
+                  <span style={{ fontFamily: f.family }} className="text-base">{f.label}</span>
+                </SelectItem>
+              ))}
+            </div>
           ))}
         </SelectContent>
       </Select>
@@ -609,6 +617,73 @@ function FontPicker({
     </div>
   );
 }
+
+interface SummaryData {
+  sport: string; cut: string; fabric: string; category: string; size: string;
+  fontFront: string; fontBack: string; teamName: string; playerName: string; number: string; total: number;
+}
+
+function PurchaseSummaryDialog({
+  open, onOpenChange, data,
+}: { open: boolean; onOpenChange: (v: boolean) => void; data: SummaryData }) {
+  const msg = [
+    "*🏆 NUEVO PEDIDO — ORE Sports / KitCraft*",
+    "",
+    `• Deporte: ${data.sport}`,
+    `• Corte: ${data.cut}`,
+    `• Tela: ${data.fabric}`,
+    `• Categoría: ${data.category}`,
+    `• Talla del diseño: ${data.size}`,
+    `• Tipografía Frente: ${data.fontFront}`,
+    `• Tipografía Espalda: ${data.fontBack}`,
+    `• Nombre del Equipo: ${data.teamName || "—"}`,
+    `• Nombre Jugador: ${data.playerName || "—"}`,
+    `• Número: ${data.number || "—"}`,
+    `• Uniformes en el roster: ${data.total}`,
+    "",
+    "¿Podemos concretar la compra?",
+  ].join("\n");
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-lg bg-white">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-black uppercase text-black">Ficha técnica del pedido</DialogTitle>
+        </DialogHeader>
+        <div className="rounded-lg border-2 border-black bg-white">
+          <dl className="divide-y divide-black/10 text-sm">
+            <SumRow k="Deporte" v={data.sport} />
+            <SumRow k="Corte" v={data.cut} />
+            <SumRow k="Tela" v={data.fabric} />
+            <SumRow k="Categoría" v={data.category} />
+            <SumRow k="Talla" v={data.size} />
+            <SumRow k="Tipografía Frente" v={data.fontFront} />
+            <SumRow k="Tipografía Espalda" v={data.fontBack} />
+            <SumRow k="Equipo" v={data.teamName || "—"} />
+            <SumRow k="Jugador" v={data.playerName || "—"} />
+            <SumRow k="Número" v={data.number || "—"} />
+            <SumRow k="Uniformes" v={String(data.total)} />
+          </dl>
+        </div>
+        <Button asChild size="lg" className="mt-2 w-full gap-2 bg-primary text-white hover:bg-primary/90">
+          <a href={waLink(msg)} target="_blank" rel="noopener noreferrer">
+            <MessageCircle className="h-5 w-5" /> Enviar por WhatsApp (+58 424-9669070)
+          </a>
+        </Button>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function SumRow({ k, v }: { k: string; v: string }) {
+  return (
+    <div className="flex items-center justify-between px-4 py-2">
+      <dt className="text-black/60">{k}</dt>
+      <dd className="max-w-[60%] truncate font-semibold text-black" title={v}>{v}</dd>
+    </div>
+  );
+}
+
 
 function FabricOption({ active, title, desc, tip, onClick }: { active: boolean; title: string; desc: string; tip: string; onClick: () => void }) {
   return (
