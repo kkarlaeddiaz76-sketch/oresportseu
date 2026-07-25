@@ -476,10 +476,10 @@ function DesignerPage() {
                           <Select value={p.size} onValueChange={(v) => updatePlayer(p.id, { size: v })}>
                             <SelectTrigger><SelectValue /></SelectTrigger>
                             <SelectContent>
-                              <div className="px-2 py-1 text-xs font-bold uppercase text-primary">Niños</div>
-                              {KIDS.map((k) => <SelectItem key={"k" + k} value={k}>{k}</SelectItem>)}
-                              <div className="px-2 py-1 text-xs font-bold uppercase text-primary">Adultos</div>
-                              {ADULTS.map((a) => <SelectItem key={"a" + a} value={a}>{a}</SelectItem>)}
+                              <div className="px-2 py-1 text-xs font-bold uppercase text-primary">{catLabel}</div>
+                              {sizesForCategory(category).map((s) => (
+                                <SelectItem key={s} value={s}>{s}</SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         </td>
