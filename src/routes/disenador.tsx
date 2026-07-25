@@ -53,6 +53,7 @@ const CATEGORIES: { v: Category; label: string; icon: string }[] = [
 
 const KIDS = ["4", "8", "12", "14", "16"];
 const ADULTS = ["S", "M", "L", "XL", "2XL", "3XL", "4XL"];
+const sizesForCategory = (c: Category) => (c === "kids" ? KIDS : ADULTS);
 
 function DesignerPage() {
   const search = Route.useSearch();
