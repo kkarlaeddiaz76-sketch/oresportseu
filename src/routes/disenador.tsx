@@ -5,10 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Upload, RotateCw, Trash2, Plus, Truck, Minus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Upload, RotateCw, Trash2, Plus, Truck, Minus, ShoppingBag, MessageCircle } from "lucide-react";
 import {
-  JerseyCanvas, FONT_OPTIONS,
-  type Sport, type NeckCut, type View, type Category,
+  JerseyCanvas, FONT_OPTIONS, FONT_CATEGORY_LABEL,
+  type Sport, type NeckCut, type View, type Category, type FontCategory,
   useObjectUrl,
 } from "@/components/designer/JerseyCanvas";
 import { SizeGuideButton } from "@/components/site/SizeGuide";
@@ -52,6 +53,7 @@ const CATEGORIES: { v: Category; label: string; icon: string }[] = [
 
 const KIDS = ["4", "8", "12", "14", "16"];
 const ADULTS = ["S", "M", "L", "XL", "2XL", "3XL", "4XL"];
+const sizesForCategory = (c: Category) => (c === "kids" ? KIDS : ADULTS);
 
 function DesignerPage() {
   const search = Route.useSearch();
@@ -66,8 +68,10 @@ function DesignerPage() {
   const [playerName, setPlayerName] = useState("PEREZ");
   const [number, setNumber] = useState("23");
   const [fabric, setFabric] = useState<"standard" | "premium">("standard");
-  const [fontFront, setFontFront] = useState(FONT_OPTIONS[0].id);
-  const [fontBack, setFontBack] = useState(FONT_OPTIONS[9].id);
+  const [fontFront, setFontFront] = useState("flipbash");
+  const [fontBack, setFontBack] = useState("flipbash");
+  const [designSize, setDesignSize] = useState<string>("L");
+  const [showSummary, setShowSummary] = useState(false);
   const { url: logoUrl, set: setLogo } = useObjectUrl();
 
   // Logo positions per view (percentages of preview area)
@@ -81,6 +85,10 @@ function DesignerPage() {
   const dragState = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null);
 
   useEffect(() => { if (!logoUrl) setLogoSelected(false); }, [logoUrl]);
+  useEffect(() => {
+    const opts = sizesForCategory(category);
+    if (!opts.includes(designSize)) setDesignSize(opts[Math.min(2, opts.length - 1)]);
+  }, [category]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const currentPos = logoPos[view];
   const updatePos = (patch: Partial<LogoState>) =>
@@ -468,10 +476,10 @@ function DesignerPage() {
                           <Select value={p.size} onValueChange={(v) => updatePlayer(p.id, { size: v })}>
                             <SelectTrigger><SelectValue /></SelectTrigger>
                             <SelectContent>
-                              <div className="px-2 py-1 text-xs font-bold uppercase text-primary">Niños</div>
-                              {KIDS.map((k) => <SelectItem key={"k" + k} value={k}>{k}</SelectItem>)}
-                              <div className="px-2 py-1 text-xs font-bold uppercase text-primary">Adultos</div>
-                              {ADULTS.map((a) => <SelectItem key={"a" + a} value={a}>{a}</SelectItem>)}
+                              <div className="px-2 py-1 text-xs font-bold uppercase text-primary">{catLabel}</div>
+                              {sizesForCategory(category).map((s) => (
+                                <SelectItem key={s} value={s}>{s}</SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         </td>
@@ -494,21 +502,58 @@ function DesignerPage() {
                 <Row k="Categoría" v={catLabel} />
                 <Row k="Equipo" v={teamName || "—"} />
                 <Row k="Tela" v={fabric === "standard" ? "Estándar 170g" : "Premium 280g"} />
+                <Row k="Talla diseño" v={designSize} />
                 <Row k="Uniformes" v={String(total)} />
               </dl>
+              <div className="mt-4">
+                <Label className="text-white/70">Talla del diseño</Label>
+                <Select value={designSize} onValueChange={setDesignSize}>
+                  <SelectTrigger className="mt-1 bg-white text-black"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {sizesForCategory(category).map((s) => (
+                      <SelectItem key={s} value={s}>{s}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div className={`mt-6 rounded-lg border p-3 text-sm font-semibold ${freeShip ? "border-primary bg-primary text-white" : "border-white/30 text-white/80"}`}>
                 <Truck className="mr-2 inline h-4 w-4" />
-                🚚 Envío gratis a toda España a partir de 10 uniformes
+                🚚 Envío gratis a partir de 10 uniformes
                 {!freeShip && <div className="mt-1 text-xs font-normal opacity-80">Añade {10 - total} más para envío gratis.</div>}
               </div>
-              <Button asChild size="lg" className="mt-6 w-full bg-primary text-white hover:bg-primary/90">
+              <Button
+                size="lg"
+                onClick={() => setShowSummary(true)}
+                className="mt-6 w-full gap-2 bg-primary text-white hover:bg-primary/90"
+              >
+                <ShoppingBag className="h-5 w-5" /> Guardar y Concretar Compra
+              </Button>
+              <Button asChild variant="outline" className="mt-2 w-full border-white/30 bg-transparent text-white hover:bg-white hover:text-black">
                 <a href={waLink(decodeURIComponent(quoteMsg))} target="_blank" rel="noopener noreferrer">
-                  Solicitar cotización por WhatsApp
+                  Solicitar cotización rápida
                 </a>
               </Button>
             </aside>
           </div>
         </section>
+
+        <PurchaseSummaryDialog
+          open={showSummary}
+          onOpenChange={setShowSummary}
+          data={{
+            sport: SPORTS.find((s) => s.v === sport)?.label ?? sport,
+            cut: { crew: "Cuello Redondo", vneck: "Cuello en V", btn2: "2 Botones", btn6: "6 Botones (Full)" }[cut],
+            fabric: fabric === "standard" ? "Estándar 170g microperforado" : "Premium 280g liso",
+            category: catLabel,
+            size: designSize,
+            fontFront: FONT_OPTIONS.find((f) => f.id === fontFront)?.label ?? fontFront,
+            fontBack: FONT_OPTIONS.find((f) => f.id === fontBack)?.label ?? fontBack,
+            teamName,
+            playerName,
+            number,
+            total,
+          }}
+        />
       </div>
     </TooltipProvider>
   );
@@ -539,6 +584,7 @@ function FontPicker({
   label, value, onChange, sample,
 }: { label: string; value: string; onChange: (v: string) => void; sample: string }) {
   const selected = FONT_OPTIONS.find((f) => f.id === value)!;
+  const cats: FontCategory[] = ["mode", "script", "ore"];
   return (
     <div>
       <Label className="text-xs">{label}</Label>
@@ -546,11 +592,18 @@ function FontPicker({
         <SelectTrigger className="mt-1">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
-          {FONT_OPTIONS.map((f) => (
-            <SelectItem key={f.id} value={f.id}>
-              <span style={{ fontFamily: f.family }} className="text-base">{f.label}</span>
-            </SelectItem>
+        <SelectContent className="max-h-80">
+          {cats.map((cat) => (
+            <div key={cat}>
+              <div className="sticky top-0 bg-black px-2 py-1 text-[10px] font-black uppercase tracking-widest text-primary">
+                {FONT_CATEGORY_LABEL[cat]}
+              </div>
+              {FONT_OPTIONS.filter((f) => f.category === cat).map((f) => (
+                <SelectItem key={f.id} value={f.id}>
+                  <span style={{ fontFamily: f.family }} className="text-base">{f.label}</span>
+                </SelectItem>
+              ))}
+            </div>
           ))}
         </SelectContent>
       </Select>
@@ -564,6 +617,73 @@ function FontPicker({
     </div>
   );
 }
+
+interface SummaryData {
+  sport: string; cut: string; fabric: string; category: string; size: string;
+  fontFront: string; fontBack: string; teamName: string; playerName: string; number: string; total: number;
+}
+
+function PurchaseSummaryDialog({
+  open, onOpenChange, data,
+}: { open: boolean; onOpenChange: (v: boolean) => void; data: SummaryData }) {
+  const msg = [
+    "*🏆 NUEVO PEDIDO — ORE Sports / KitCraft*",
+    "",
+    `• Deporte: ${data.sport}`,
+    `• Corte: ${data.cut}`,
+    `• Tela: ${data.fabric}`,
+    `• Categoría: ${data.category}`,
+    `• Talla del diseño: ${data.size}`,
+    `• Tipografía Frente: ${data.fontFront}`,
+    `• Tipografía Espalda: ${data.fontBack}`,
+    `• Nombre del Equipo: ${data.teamName || "—"}`,
+    `• Nombre Jugador: ${data.playerName || "—"}`,
+    `• Número: ${data.number || "—"}`,
+    `• Uniformes en el roster: ${data.total}`,
+    "",
+    "¿Podemos concretar la compra?",
+  ].join("\n");
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-lg bg-white">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-black uppercase text-black">Ficha técnica del pedido</DialogTitle>
+        </DialogHeader>
+        <div className="rounded-lg border-2 border-black bg-white">
+          <dl className="divide-y divide-black/10 text-sm">
+            <SumRow k="Deporte" v={data.sport} />
+            <SumRow k="Corte" v={data.cut} />
+            <SumRow k="Tela" v={data.fabric} />
+            <SumRow k="Categoría" v={data.category} />
+            <SumRow k="Talla" v={data.size} />
+            <SumRow k="Tipografía Frente" v={data.fontFront} />
+            <SumRow k="Tipografía Espalda" v={data.fontBack} />
+            <SumRow k="Equipo" v={data.teamName || "—"} />
+            <SumRow k="Jugador" v={data.playerName || "—"} />
+            <SumRow k="Número" v={data.number || "—"} />
+            <SumRow k="Uniformes" v={String(data.total)} />
+          </dl>
+        </div>
+        <Button asChild size="lg" className="mt-2 w-full gap-2 bg-primary text-white hover:bg-primary/90">
+          <a href={waLink(msg)} target="_blank" rel="noopener noreferrer">
+            <MessageCircle className="h-5 w-5" /> Enviar por WhatsApp (+58 424-9669070)
+          </a>
+        </Button>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function SumRow({ k, v }: { k: string; v: string }) {
+  return (
+    <div className="flex items-center justify-between px-4 py-2">
+      <dt className="text-black/60">{k}</dt>
+      <dd className="max-w-[60%] truncate font-semibold text-black" title={v}>{v}</dd>
+    </div>
+  );
+}
+
 
 function FabricOption({ active, title, desc, tip, onClick }: { active: boolean; title: string; desc: string; tip: string; onClick: () => void }) {
   return (
