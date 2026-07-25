@@ -5,24 +5,38 @@ export type NeckCut = "crew" | "vneck" | "btn2" | "btn6";
 export type View = "front" | "back";
 export type Category = "kids" | "women" | "men";
 
+export type FontCategory = "mode" | "script" | "ore";
+
 export interface FontOption {
   id: string;
   label: string;
   family: string;
-  kind: "script" | "block";
+  category: FontCategory;
 }
 
+export const FONT_CATEGORY_LABEL: Record<FontCategory, string> = {
+  mode: "MODE (Deportivas / Bloque)",
+  script: "SCRIPT (Cursivas)",
+  ore: "ORE SPORTS (Oficial)",
+};
+
 export const FONT_OPTIONS: FontOption[] = [
-  { id: "yellowtail", label: "Script Atlética Fuerte", family: "'Yellowtail', cursive", kind: "script" },
-  { id: "allura", label: "Script Tradicional Béisbol", family: "'Allura', cursive", kind: "script" },
-  { id: "pacifico", label: "Brush Script Moderna", family: "'Pacifico', cursive", kind: "script" },
-  { id: "satisfy", label: "Script Elegante Inclinada", family: "'Satisfy', cursive", kind: "script" },
-  { id: "sacramento", label: "Bold Athletic Script", family: "'Sacramento', cursive", kind: "script" },
-  { id: "bungee", label: "Bloque Octagonal Colegial", family: "'Bungee', sans-serif", kind: "block" },
-  { id: "alfa", label: "Slab Serif Imprenta Gruesa", family: "'Alfa Slab One', serif", kind: "block" },
-  { id: "rye", label: "Retro Spur Serif Vintage", family: "'Rye', serif", kind: "block" },
-  { id: "michroma", label: "Sans-Serif Rectangular Expandida", family: "'Michroma', sans-serif", kind: "block" },
-  { id: "anton", label: "Heavy Athletic Block", family: "'Anton', 'Impact', sans-serif", kind: "block" },
+  // MODE
+  { id: "flipbash", label: "Flipbash Condensed Italic", family: "'Oswald', 'Impact', sans-serif", category: "mode" },
+  { id: "mlb-pirates", label: "MLB Pirates", family: "'Graduate', serif", category: "mode" },
+  { id: "nba-hornets", label: "NBA Hornets Buzz City", family: "'Teko', sans-serif", category: "mode" },
+  { id: "spy-agency", label: "Spy Agency 3.2 Semi-Italic", family: "'Chakra Petch', sans-serif", category: "mode" },
+  { id: "texat", label: "Texat Bold", family: "'Staatliches', sans-serif", category: "mode" },
+  { id: "university", label: "University", family: "'Ultra', serif", category: "mode" },
+  // SCRIPT
+  { id: "atelier", label: "Atelier du Soleil", family: "'Great Vibes', cursive", category: "script" },
+  { id: "black-stars", label: "Black Stars Regular", family: "'Kaushan Script', cursive", category: "script" },
+  { id: "campana", label: "Campana Script", family: "'Alex Brush', cursive", category: "script" },
+  { id: "lobster", label: "Lobster 1.4", family: "'Lobster', cursive", category: "script" },
+  { id: "sunday-midnight", label: "Sunday Midnight", family: "'Yellowtail', cursive", category: "script" },
+  { id: "united-kings", label: "United Kings", family: "'Sacramento', cursive", category: "script" },
+  // ORE SPORTS
+  { id: "eurostile", label: "Eurostile Extended Black", family: "'Michroma', sans-serif", category: "ore" },
 ];
 
 interface Props {
