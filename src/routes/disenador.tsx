@@ -502,21 +502,58 @@ function DesignerPage() {
                 <Row k="Categoría" v={catLabel} />
                 <Row k="Equipo" v={teamName || "—"} />
                 <Row k="Tela" v={fabric === "standard" ? "Estándar 170g" : "Premium 280g"} />
+                <Row k="Talla diseño" v={designSize} />
                 <Row k="Uniformes" v={String(total)} />
               </dl>
+              <div className="mt-4">
+                <Label className="text-white/70">Talla del diseño</Label>
+                <Select value={designSize} onValueChange={setDesignSize}>
+                  <SelectTrigger className="mt-1 bg-white text-black"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {sizesForCategory(category).map((s) => (
+                      <SelectItem key={s} value={s}>{s}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div className={`mt-6 rounded-lg border p-3 text-sm font-semibold ${freeShip ? "border-primary bg-primary text-white" : "border-white/30 text-white/80"}`}>
                 <Truck className="mr-2 inline h-4 w-4" />
-                🚚 Envío gratis a toda España a partir de 10 uniformes
+                🚚 Envío gratis a partir de 10 uniformes
                 {!freeShip && <div className="mt-1 text-xs font-normal opacity-80">Añade {10 - total} más para envío gratis.</div>}
               </div>
-              <Button asChild size="lg" className="mt-6 w-full bg-primary text-white hover:bg-primary/90">
+              <Button
+                size="lg"
+                onClick={() => setShowSummary(true)}
+                className="mt-6 w-full gap-2 bg-primary text-white hover:bg-primary/90"
+              >
+                <ShoppingBag className="h-5 w-5" /> Guardar y Concretar Compra
+              </Button>
+              <Button asChild variant="outline" className="mt-2 w-full border-white/30 bg-transparent text-white hover:bg-white hover:text-black">
                 <a href={waLink(decodeURIComponent(quoteMsg))} target="_blank" rel="noopener noreferrer">
-                  Solicitar cotización por WhatsApp
+                  Solicitar cotización rápida
                 </a>
               </Button>
             </aside>
           </div>
         </section>
+
+        <PurchaseSummaryDialog
+          open={showSummary}
+          onOpenChange={setShowSummary}
+          data={{
+            sport: SPORTS.find((s) => s.v === sport)?.label ?? sport,
+            cut: { crew: "Cuello Redondo", vneck: "Cuello en V", btn2: "2 Botones", btn6: "6 Botones (Full)" }[cut],
+            fabric: fabric === "standard" ? "Estándar 170g microperforado" : "Premium 280g liso",
+            category: catLabel,
+            size: designSize,
+            fontFront: FONT_OPTIONS.find((f) => f.id === fontFront)?.label ?? fontFront,
+            fontBack: FONT_OPTIONS.find((f) => f.id === fontBack)?.label ?? fontBack,
+            teamName,
+            playerName,
+            number,
+            total,
+          }}
+        />
       </div>
     </TooltipProvider>
   );
