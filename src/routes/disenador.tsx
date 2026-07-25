@@ -85,6 +85,10 @@ function DesignerPage() {
   const dragState = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null);
 
   useEffect(() => { if (!logoUrl) setLogoSelected(false); }, [logoUrl]);
+  useEffect(() => {
+    const opts = sizesForCategory(category);
+    if (!opts.includes(designSize)) setDesignSize(opts[Math.min(2, opts.length - 1)]);
+  }, [category]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const currentPos = logoPos[view];
   const updatePos = (patch: Partial<LogoState>) =>
