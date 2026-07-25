@@ -12,7 +12,8 @@ export function Footer() {
         </div>
         <div>
           <h4 className="mb-3 text-sm font-bold uppercase text-primary">Contacto</h4>
-          <p className="text-sm text-white/70">España & Europa</p>
+          <p className="text-sm text-white/70">Venezuela · Envíos internacionales</p>
+          <p className="text-sm text-white/70">WhatsApp: +58 424-9669070</p>
           <p className="text-sm text-white/70">hola@ore.sports.eu</p>
         </div>
         <div>
