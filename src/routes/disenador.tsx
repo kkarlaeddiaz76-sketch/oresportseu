@@ -68,8 +68,10 @@ function DesignerPage() {
   const [playerName, setPlayerName] = useState("PEREZ");
   const [number, setNumber] = useState("23");
   const [fabric, setFabric] = useState<"standard" | "premium">("standard");
-  const [fontFront, setFontFront] = useState(FONT_OPTIONS[0].id);
-  const [fontBack, setFontBack] = useState(FONT_OPTIONS[9].id);
+  const [fontFront, setFontFront] = useState("flipbash");
+  const [fontBack, setFontBack] = useState("flipbash");
+  const [designSize, setDesignSize] = useState<string>("L");
+  const [showSummary, setShowSummary] = useState(false);
   const { url: logoUrl, set: setLogo } = useObjectUrl();
 
   // Logo positions per view (percentages of preview area)
