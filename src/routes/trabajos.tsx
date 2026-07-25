@@ -5,6 +5,12 @@ import monarcas from "@/assets/monarcas.jpg.asset.json";
 import cachorros from "@/assets/cachorros.jpg.asset.json";
 import leones from "@/assets/leones.jpg.asset.json";
 import quisqueya from "@/assets/quisqueya.jpg.asset.json";
+import caciques from "@/assets/caciques.jpg.asset.json";
+import halcones from "@/assets/halcones.jpg.asset.json";
+import naiguata from "@/assets/naiguata.jpg.asset.json";
+import raptors from "@/assets/raptors.jpg.asset.json";
+import espartanos from "@/assets/espartanos.jpg.asset.json";
+import astros from "@/assets/astros.jpg.asset.json";
 import { waLink } from "@/components/site/WhatsAppButton";
 
 export const Route = createFileRoute("/trabajos")({
@@ -28,6 +34,12 @@ const items = [
   { img: cachorros, name: "Cachorros" },
   { img: leones, name: "Leones" },
   { img: quisqueya, name: "Quisqueya Buccaneers" },
+  { img: caciques, name: "Caciques" },
+  { img: halcones, name: "Halcones" },
+  { img: naiguata, name: "Naiguatá" },
+  { img: raptors, name: "Raptors" },
+  { img: espartanos, name: "Espartanos" },
+  { img: astros, name: "Astros" },
 ];
 
 function Gallery() {
