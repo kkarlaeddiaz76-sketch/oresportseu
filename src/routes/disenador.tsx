@@ -5,10 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Upload, RotateCw, Trash2, Plus, Truck, Minus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Upload, RotateCw, Trash2, Plus, Truck, Minus, ShoppingBag, MessageCircle } from "lucide-react";
 import {
-  JerseyCanvas, FONT_OPTIONS,
-  type Sport, type NeckCut, type View, type Category,
+  JerseyCanvas, FONT_OPTIONS, FONT_CATEGORY_LABEL,
+  type Sport, type NeckCut, type View, type Category, type FontCategory,
   useObjectUrl,
 } from "@/components/designer/JerseyCanvas";
 import { SizeGuideButton } from "@/components/site/SizeGuide";
