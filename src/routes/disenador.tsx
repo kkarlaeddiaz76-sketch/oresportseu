@@ -340,8 +340,31 @@ function DesignerPage() {
               )}
             </Panel>
 
+            {/* Templates */}
+            <Panel title="Diseño Base / Plantilla">
+              <div className="grid grid-cols-3 gap-2">
+                {TEMPLATES.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setTemplate(t.id)}
+                    title={t.desc}
+                    className={`group flex flex-col items-center gap-1 rounded-lg border-2 p-1.5 text-[10px] font-bold uppercase transition ${
+                      template === t.id ? "border-primary bg-primary/5 text-primary" : "border-black/15 bg-white text-black hover:border-black"
+                    }`}
+                  >
+                    <TemplateThumb template={t.id} primary={primary} secondary={secondary} accent={accent} />
+                    <span className="truncate leading-tight">{t.label}</span>
+                  </button>
+                ))}
+              </div>
+              <p className="mt-2 text-[11px] text-black/60">
+                Los colores Principal / Mangas / Acento siguen siendo editables sobre cualquier plantilla.
+              </p>
+            </Panel>
+
             {/* Colors */}
             <Panel title="Colores">
+
               <div className="grid grid-cols-3 gap-3">
                 <ColorField label="Principal" value={primary} onChange={setPrimary} />
                 <ColorField label="Mangas" value={secondary} onChange={setSecondary} />
