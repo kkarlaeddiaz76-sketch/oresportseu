@@ -745,3 +745,81 @@ function Row({ k, v }: { k: string; v: string }) {
     </div>
   );
 }
+
+function TemplateThumb({
+  template, primary, secondary, accent,
+}: { template: Template; primary: string; secondary: string; accent: string }) {
+  const gid = `g-${template}`;
+  const cid = `c-${template}`;
+  const sid = `s-${template}`;
+  return (
+    <svg viewBox="0 0 60 70" className="h-12 w-12" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id={gid} x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor={primary} />
+          <stop offset="100%" stopColor={secondary} />
+        </linearGradient>
+        <pattern id={cid} width="10" height="10" patternUnits="userSpaceOnUse">
+          <rect width="10" height="10" fill={primary} />
+          <path d="M0 3 Q3 0 6 3 T10 3 L10 6 Q6 8 3 6 T0 7 Z" fill={secondary} opacity="0.6" />
+          <ellipse cx="7" cy="8" rx="2" ry="1.2" fill={accent} opacity="0.4" />
+        </pattern>
+        <pattern id={sid} width="4" height="3.5" patternUnits="userSpaceOnUse">
+          <rect width="4" height="3.5" fill={primary} />
+          <path d="M2 0 A2 2 0 0 1 4 1.7 A2 2 0 0 1 2 3.5 A2 2 0 0 1 0 1.7 A2 2 0 0 1 2 0"
+                fill="none" stroke={secondary} strokeWidth="0.25" opacity="0.6" />
+        </pattern>
+      </defs>
+      {/* sleeves */}
+      <path d="M18 12 L6 22 L12 30 L22 24 Z" fill={secondary} stroke="#000" strokeWidth="0.6" />
+      <path d="M42 12 L54 22 L48 30 L38 24 Z" fill={secondary} stroke="#000" strokeWidth="0.6" />
+      {template === "raglan" && (
+        <>
+          <path d="M26 10 L18 12 L6 22 L12 30 L22 24 L25 16 Z" fill={secondary} stroke="#000" strokeWidth="0.5" />
+          <path d="M34 10 L42 12 L54 22 L48 30 L38 24 L35 16 Z" fill={secondary} stroke="#000" strokeWidth="0.5" />
+        </>
+      )}
+      {/* torso */}
+      <path
+        d="M18 12 L24 8 Q30 6 36 8 L42 12 L46 24 L48 66 Q30 70 12 66 L14 24 Z"
+        fill={
+          template === "gradient" ? `url(#${gid})` :
+          template === "camo" ? `url(#${cid})` :
+          template === "geometric" ? `url(#${sid})` :
+          primary
+        }
+        stroke="#000"
+        strokeWidth="0.6"
+      />
+      {template === "sidePanels" && (
+        <>
+          <path d="M14 24 L18 26 L20 66 Q17 66.5 13 66 Z" fill={secondary} />
+          <path d="M46 24 L42 26 L40 66 Q43 66.5 47 66 Z" fill={secondary} />
+        </>
+      )}
+      {template === "piping" && (
+        <g fill="none" stroke={accent} strokeWidth="0.8">
+          <path d="M24 8 Q30 6 36 8" />
+          <path d="M12 30 L22 24" />
+          <path d="M48 30 L38 24" />
+        </g>
+      )}
+      {template === "doublePiping" && (
+        <g stroke={accent} strokeWidth="0.8" fill="none">
+          <line x1="19" y1="27" x2="41" y2="27" />
+          <line x1="18" y1="30" x2="42" y2="30" />
+        </g>
+      )}
+      {template === "ribCollar" && (
+        <>
+          <rect x="10" y="28" width="12" height="1.2" fill={accent} />
+          <rect x="10" y="29.2" width="12" height="1.2" fill={secondary} />
+          <rect x="38" y="28" width="12" height="1.2" fill={accent} />
+          <rect x="38" y="29.2" width="12" height="1.2" fill={secondary} />
+        </>
+      )}
+      {/* neck */}
+      <path d="M25 8 Q30 11 35 8 Q34 12 30 12 Q26 12 25 8 Z" fill="#111" stroke={accent} strokeWidth="0.5" />
+    </svg>
+  );
+}
