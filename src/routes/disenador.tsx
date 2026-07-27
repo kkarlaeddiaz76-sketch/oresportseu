@@ -688,6 +688,8 @@ function PurchaseSummaryDialog({
             <SumRow k="Deporte" v={data.sport} />
             <SumRow k="Corte" v={data.cut} />
             <SumRow k="Tela" v={data.fabric} />
+            <SumRow k="Diseño base" v={data.template} />
+
             <SumRow k="Categoría" v={data.category} />
             <SumRow k="Talla" v={data.size} />
             <SumRow k="Tipografía Frente" v={data.fontFront} />
