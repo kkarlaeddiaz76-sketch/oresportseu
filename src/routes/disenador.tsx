@@ -663,6 +663,8 @@ function PurchaseSummaryDialog({
     `• Deporte: ${data.sport}`,
     `• Corte: ${data.cut}`,
     `• Tela: ${data.fabric}`,
+    `• Diseño base: ${data.template}`,
+
     `• Categoría: ${data.category}`,
     `• Talla del diseño: ${data.size}`,
     `• Tipografía Frente: ${data.fontFront}`,
