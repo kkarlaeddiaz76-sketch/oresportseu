@@ -72,8 +72,10 @@ function DesignerPage() {
   const [fontFront, setFontFront] = useState("flipbash");
   const [fontBack, setFontBack] = useState("flipbash");
   const [designSize, setDesignSize] = useState<string>("L");
+  const [template, setTemplate] = useState<Template>("solid");
   const [showSummary, setShowSummary] = useState(false);
   const { url: logoUrl, set: setLogo } = useObjectUrl();
+
 
   // Logo positions per view (percentages of preview area)
   const [logoPos, setLogoPos] = useState<{ front: LogoState; back: LogoState }>({
