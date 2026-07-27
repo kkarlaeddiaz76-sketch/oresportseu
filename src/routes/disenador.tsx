@@ -216,7 +216,9 @@ function DesignerPage() {
                 fontFront={fontFrontFamily}
                 fontBack={fontBackFamily}
                 category={category}
+                template={template}
               />
+
 
               {logoUrl && (
                 <div
