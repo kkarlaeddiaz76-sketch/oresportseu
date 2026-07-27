@@ -649,9 +649,10 @@ function FontPicker({
 }
 
 interface SummaryData {
-  sport: string; cut: string; fabric: string; category: string; size: string;
+  sport: string; cut: string; fabric: string; template: string; category: string; size: string;
   fontFront: string; fontBack: string; teamName: string; playerName: string; number: string; total: number;
 }
+
 
 function PurchaseSummaryDialog({
   open, onOpenChange, data,
