@@ -161,54 +161,125 @@ function TemplateDefs({ primary, secondary, accent }: { primary: string; seconda
 
 
 function JerseyShape({
-  sleeveless, primary, secondary, cut, waistTaper,
-}: { sleeveless: boolean; primary: string; secondary: string; cut: NeckCut; waistTaper: number }) {
+  sleeveless, primary, secondary, accent, cut, waistTaper, template,
+}: { sleeveless: boolean; primary: string; secondary: string; accent: string; cut: NeckCut; waistTaper: number; template: Template }) {
   void cut;
   const w = waistTaper;
   const torso =
     `M 150 110 L 200 90 Q 250 75 300 90 L 350 110 L ${380 - w} 200 L ${400 - w} 560 Q 250 590 ${100 + w} 560 L ${120 + w} 200 Z`;
 
+  // Raglan sleeves cut diagonally from neck
+  const raglan = template === "raglan";
   const sleeveLeft = sleeveless
     ? "M 150 110 L 130 190 L 165 200 L 185 130 Z"
-    : "M 150 110 L 70 170 L 100 260 L 175 220 Z";
+    : raglan
+      ? "M 220 92 L 150 110 L 70 170 L 100 260 L 175 220 L 210 150 Z"
+      : "M 150 110 L 70 170 L 100 260 L 175 220 Z";
   const sleeveRight = sleeveless
     ? "M 350 110 L 370 190 L 335 200 L 315 130 Z"
-    : "M 350 110 L 430 170 L 400 260 L 325 220 Z";
+    : raglan
+      ? "M 280 92 L 350 110 L 430 170 L 400 260 L 325 220 L 290 150 Z"
+      : "M 350 110 L 430 170 L 400 260 L 325 220 Z";
+
+  // Body fill by template
+  let torsoFill: string = primary;
+  if (template === "gradient") torsoFill = "url(#tplGradient)";
+  else if (template === "camo") torsoFill = "url(#tplCamo)";
+  else if (template === "geometric") torsoFill = "url(#tplScales)";
+
+  const sleeveFill = template === "raglan" || template === "sidePanels" ? secondary : secondary;
 
   return (
     <g>
-      <path d={sleeveLeft} fill={secondary} stroke="#000" strokeWidth="2" />
-      <path d={sleeveRight} fill={secondary} stroke="#000" strokeWidth="2" />
-      <path d={torso} fill={primary} stroke="#000" strokeWidth="2" />
+      <path d={sleeveLeft} fill={sleeveFill} stroke="#000" strokeWidth="2" />
+      <path d={sleeveRight} fill={sleeveFill} stroke="#000" strokeWidth="2" />
+      <path d={torso} fill={torsoFill} stroke="#000" strokeWidth="2" />
+
+      {/* Side panels */}
+      {template === "sidePanels" && (
+        <g>
+          <path d={`M ${120 + w} 200 L 175 220 L 195 560 Q 185 565 ${105 + w} 560 Z`} fill={secondary} opacity="0.95" />
+          <path d={`M ${380 - w} 200 L 325 220 L 305 560 Q 315 565 ${395 - w} 560 Z`} fill={secondary} opacity="0.95" />
+          <line x1="175" y1="220" x2="195" y2="560" stroke={accent} strokeWidth="2" />
+          <line x1="325" y1="220" x2="305" y2="560" stroke={accent} strokeWidth="2" />
+        </g>
+      )}
+
+      {/* Piping — accent line on shoulders & sleeve edges */}
+      {template === "piping" && (
+        <g fill="none" stroke={accent} strokeWidth="3" strokeLinejoin="round">
+          <path d="M 200 90 Q 250 75 300 90" />
+          {!sleeveless && <path d="M 100 260 L 175 220" />}
+          {!sleeveless && <path d="M 400 260 L 325 220" />}
+        </g>
+      )}
+
+      {/* Double piping across chest */}
+      {template === "doublePiping" && (
+        <g stroke={accent} strokeWidth="3" fill="none">
+          <line x1="155" y1="215" x2="345" y2="215" />
+          <line x1="150" y1="235" x2="350" y2="235" />
+        </g>
+      )}
+
+      {/* Rib collar tricolor cuffs */}
+      {template === "ribCollar" && !sleeveless && (
+        <g>
+          <rect x="95" y="245" width="90" height="8" fill={accent} />
+          <rect x="95" y="253" width="90" height="8" fill={primary} />
+          <rect x="95" y="261" width="90" height="8" fill={secondary} />
+          <rect x="315" y="245" width="90" height="8" fill={accent} />
+          <rect x="315" y="253" width="90" height="8" fill={primary} />
+          <rect x="315" y="261" width="90" height="8" fill={secondary} />
+        </g>
+      )}
     </g>
   );
 }
 
-function NeckCutShape({ cut, accent }: { cut: NeckCut; accent: string }) {
+function NeckCutShape({
+  cut, accent, template, secondary, primary,
+}: { cut: NeckCut; accent: string; template: Template; secondary: string; primary: string }) {
+  const strokeW = template === "piping" || template === "ribCollar" ? 5 : 3;
   if (cut === "vneck") {
     return (
-      <path
-        d="M 220 92 L 250 145 L 280 92 Q 250 100 220 92 Z"
-        fill="#111"
-        stroke={accent}
-        strokeWidth="3"
-      />
+      <g>
+        <path
+          d="M 220 92 L 250 145 L 280 92 Q 250 100 220 92 Z"
+          fill="#111"
+          stroke={accent}
+          strokeWidth={strokeW}
+        />
+        {template === "ribCollar" && (
+          <path d="M 218 90 Q 250 102 282 90" fill="none" stroke={secondary} strokeWidth="3" />
+        )}
+      </g>
     );
   }
   return (
-    <path
-      d="M 215 92 Q 250 115 285 92 Q 275 130 250 132 Q 225 130 215 92 Z"
-      fill="#111"
-      stroke={accent}
-      strokeWidth="3"
-    />
+    <g>
+      <path
+        d="M 215 92 Q 250 115 285 92 Q 275 130 250 132 Q 225 130 215 92 Z"
+        fill="#111"
+        stroke={accent}
+        strokeWidth={strokeW}
+      />
+      {template === "ribCollar" && (
+        <>
+          <path d="M 213 88 Q 250 112 287 88" fill="none" stroke={secondary} strokeWidth="3" />
+          <path d="M 216 96 Q 250 118 284 96" fill="none" stroke={primary} strokeWidth="2" />
+        </>
+      )}
+    </g>
   );
 }
 
-function ButtonsPlacket({ cut }: { cut: NeckCut }) {
+function ButtonsPlacket({ cut, template, accent }: { cut: NeckCut; template: Template; accent: string }) {
+  const pipe = template === "piping";
   if (cut === "btn2") {
     return (
       <g>
+        {pipe && <line x1="250" y1="132" x2="250" y2="175" stroke={accent} strokeWidth="2" />}
         <circle cx="250" cy="140" r="4" fill="#fff" stroke="#000" strokeWidth="1" />
         <circle cx="250" cy="165" r="4" fill="#fff" stroke="#000" strokeWidth="1" />
       </g>
@@ -217,6 +288,8 @@ function ButtonsPlacket({ cut }: { cut: NeckCut }) {
   const buttons = [140, 195, 250, 305, 360, 415];
   return (
     <g>
+      {pipe && <line x1="244" y1="130" x2="244" y2="560" stroke={accent} strokeWidth="1.5" />}
+      {pipe && <line x1="256" y1="130" x2="256" y2="560" stroke={accent} strokeWidth="1.5" />}
       <line x1="250" y1="130" x2="250" y2="560" stroke="#fff" strokeWidth="2" opacity="0.85" />
       {buttons.map((y) => (
         <circle key={y} cx="250" cy={y} r="4.5" fill="#fff" stroke="#000" strokeWidth="1" />
@@ -224,6 +297,7 @@ function ButtonsPlacket({ cut }: { cut: NeckCut }) {
     </g>
   );
 }
+
 
 function FrontContent({
   teamName, accent, fontFamily,
