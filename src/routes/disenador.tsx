@@ -8,10 +8,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Upload, RotateCw, Trash2, Plus, Truck, Minus, ShoppingBag, MessageCircle } from "lucide-react";
 import {
-  JerseyCanvas, FONT_OPTIONS, FONT_CATEGORY_LABEL,
-  type Sport, type NeckCut, type View, type Category, type FontCategory,
+  JerseyCanvas, FONT_OPTIONS, FONT_CATEGORY_LABEL, TEMPLATES,
+  type Sport, type NeckCut, type View, type Category, type FontCategory, type Template,
   useObjectUrl,
 } from "@/components/designer/JerseyCanvas";
+
 import { SizeGuideButton } from "@/components/site/SizeGuide";
 import { waLink } from "@/components/site/WhatsAppButton";
 import { z } from "zod";
@@ -71,8 +72,10 @@ function DesignerPage() {
   const [fontFront, setFontFront] = useState("flipbash");
   const [fontBack, setFontBack] = useState("flipbash");
   const [designSize, setDesignSize] = useState<string>("L");
+  const [template, setTemplate] = useState<Template>("solid");
   const [showSummary, setShowSummary] = useState(false);
   const { url: logoUrl, set: setLogo } = useObjectUrl();
+
 
   // Logo positions per view (percentages of preview area)
   const [logoPos, setLogoPos] = useState<{ front: LogoState; back: LogoState }>({
@@ -213,7 +216,9 @@ function DesignerPage() {
                 fontFront={fontFrontFamily}
                 fontBack={fontBackFamily}
                 category={category}
+                template={template}
               />
+
 
               {logoUrl && (
                 <div
@@ -335,8 +340,31 @@ function DesignerPage() {
               )}
             </Panel>
 
+            {/* Templates */}
+            <Panel title="Diseño Base / Plantilla">
+              <div className="grid grid-cols-3 gap-2">
+                {TEMPLATES.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setTemplate(t.id)}
+                    title={t.desc}
+                    className={`group flex flex-col items-center gap-1 rounded-lg border-2 p-1.5 text-[10px] font-bold uppercase transition ${
+                      template === t.id ? "border-primary bg-primary/5 text-primary" : "border-black/15 bg-white text-black hover:border-black"
+                    }`}
+                  >
+                    <TemplateThumb template={t.id} primary={primary} secondary={secondary} accent={accent} />
+                    <span className="truncate leading-tight">{t.label}</span>
+                  </button>
+                ))}
+              </div>
+              <p className="mt-2 text-[11px] text-black/60">
+                Los colores Principal / Mangas / Acento siguen siendo editables sobre cualquier plantilla.
+              </p>
+            </Panel>
+
             {/* Colors */}
             <Panel title="Colores">
+
               <div className="grid grid-cols-3 gap-3">
                 <ColorField label="Principal" value={primary} onChange={setPrimary} />
                 <ColorField label="Mangas" value={secondary} onChange={setSecondary} />
@@ -544,6 +572,8 @@ function DesignerPage() {
             sport: SPORTS.find((s) => s.v === sport)?.label ?? sport,
             cut: { crew: "Cuello Redondo", vneck: "Cuello en V", btn2: "2 Botones", btn6: "6 Botones (Full)" }[cut],
             fabric: fabric === "standard" ? "Estándar 170g microperforado" : "Premium 280g liso",
+            template: TEMPLATES.find((t) => t.id === template)?.label ?? template,
+
             category: catLabel,
             size: designSize,
             fontFront: FONT_OPTIONS.find((f) => f.id === fontFront)?.label ?? fontFront,
@@ -619,9 +649,10 @@ function FontPicker({
 }
 
 interface SummaryData {
-  sport: string; cut: string; fabric: string; category: string; size: string;
+  sport: string; cut: string; fabric: string; template: string; category: string; size: string;
   fontFront: string; fontBack: string; teamName: string; playerName: string; number: string; total: number;
 }
+
 
 function PurchaseSummaryDialog({
   open, onOpenChange, data,
@@ -632,6 +663,8 @@ function PurchaseSummaryDialog({
     `• Deporte: ${data.sport}`,
     `• Corte: ${data.cut}`,
     `• Tela: ${data.fabric}`,
+    `• Diseño base: ${data.template}`,
+
     `• Categoría: ${data.category}`,
     `• Talla del diseño: ${data.size}`,
     `• Tipografía Frente: ${data.fontFront}`,
@@ -655,6 +688,8 @@ function PurchaseSummaryDialog({
             <SumRow k="Deporte" v={data.sport} />
             <SumRow k="Corte" v={data.cut} />
             <SumRow k="Tela" v={data.fabric} />
+            <SumRow k="Diseño base" v={data.template} />
+
             <SumRow k="Categoría" v={data.category} />
             <SumRow k="Talla" v={data.size} />
             <SumRow k="Tipografía Frente" v={data.fontFront} />
@@ -708,5 +743,83 @@ function Row({ k, v }: { k: string; v: string }) {
       <dt className="text-white/60">{k}</dt>
       <dd className="font-semibold">{v}</dd>
     </div>
+  );
+}
+
+function TemplateThumb({
+  template, primary, secondary, accent,
+}: { template: Template; primary: string; secondary: string; accent: string }) {
+  const gid = `g-${template}`;
+  const cid = `c-${template}`;
+  const sid = `s-${template}`;
+  return (
+    <svg viewBox="0 0 60 70" className="h-12 w-12" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id={gid} x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor={primary} />
+          <stop offset="100%" stopColor={secondary} />
+        </linearGradient>
+        <pattern id={cid} width="10" height="10" patternUnits="userSpaceOnUse">
+          <rect width="10" height="10" fill={primary} />
+          <path d="M0 3 Q3 0 6 3 T10 3 L10 6 Q6 8 3 6 T0 7 Z" fill={secondary} opacity="0.6" />
+          <ellipse cx="7" cy="8" rx="2" ry="1.2" fill={accent} opacity="0.4" />
+        </pattern>
+        <pattern id={sid} width="4" height="3.5" patternUnits="userSpaceOnUse">
+          <rect width="4" height="3.5" fill={primary} />
+          <path d="M2 0 A2 2 0 0 1 4 1.7 A2 2 0 0 1 2 3.5 A2 2 0 0 1 0 1.7 A2 2 0 0 1 2 0"
+                fill="none" stroke={secondary} strokeWidth="0.25" opacity="0.6" />
+        </pattern>
+      </defs>
+      {/* sleeves */}
+      <path d="M18 12 L6 22 L12 30 L22 24 Z" fill={secondary} stroke="#000" strokeWidth="0.6" />
+      <path d="M42 12 L54 22 L48 30 L38 24 Z" fill={secondary} stroke="#000" strokeWidth="0.6" />
+      {template === "raglan" && (
+        <>
+          <path d="M26 10 L18 12 L6 22 L12 30 L22 24 L25 16 Z" fill={secondary} stroke="#000" strokeWidth="0.5" />
+          <path d="M34 10 L42 12 L54 22 L48 30 L38 24 L35 16 Z" fill={secondary} stroke="#000" strokeWidth="0.5" />
+        </>
+      )}
+      {/* torso */}
+      <path
+        d="M18 12 L24 8 Q30 6 36 8 L42 12 L46 24 L48 66 Q30 70 12 66 L14 24 Z"
+        fill={
+          template === "gradient" ? `url(#${gid})` :
+          template === "camo" ? `url(#${cid})` :
+          template === "geometric" ? `url(#${sid})` :
+          primary
+        }
+        stroke="#000"
+        strokeWidth="0.6"
+      />
+      {template === "sidePanels" && (
+        <>
+          <path d="M14 24 L18 26 L20 66 Q17 66.5 13 66 Z" fill={secondary} />
+          <path d="M46 24 L42 26 L40 66 Q43 66.5 47 66 Z" fill={secondary} />
+        </>
+      )}
+      {template === "piping" && (
+        <g fill="none" stroke={accent} strokeWidth="0.8">
+          <path d="M24 8 Q30 6 36 8" />
+          <path d="M12 30 L22 24" />
+          <path d="M48 30 L38 24" />
+        </g>
+      )}
+      {template === "doublePiping" && (
+        <g stroke={accent} strokeWidth="0.8" fill="none">
+          <line x1="19" y1="27" x2="41" y2="27" />
+          <line x1="18" y1="30" x2="42" y2="30" />
+        </g>
+      )}
+      {template === "ribCollar" && (
+        <>
+          <rect x="10" y="28" width="12" height="1.2" fill={accent} />
+          <rect x="10" y="29.2" width="12" height="1.2" fill={secondary} />
+          <rect x="38" y="28" width="12" height="1.2" fill={accent} />
+          <rect x="38" y="29.2" width="12" height="1.2" fill={secondary} />
+        </>
+      )}
+      {/* neck */}
+      <path d="M25 8 Q30 11 35 8 Q34 12 30 12 Q26 12 25 8 Z" fill="#111" stroke={accent} strokeWidth="0.5" />
+    </svg>
   );
 }
