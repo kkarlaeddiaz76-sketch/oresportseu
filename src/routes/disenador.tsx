@@ -572,6 +572,8 @@ function DesignerPage() {
             sport: SPORTS.find((s) => s.v === sport)?.label ?? sport,
             cut: { crew: "Cuello Redondo", vneck: "Cuello en V", btn2: "2 Botones", btn6: "6 Botones (Full)" }[cut],
             fabric: fabric === "standard" ? "Estándar 170g microperforado" : "Premium 280g liso",
+            template: TEMPLATES.find((t) => t.id === template)?.label ?? template,
+
             category: catLabel,
             size: designSize,
             fontFront: FONT_OPTIONS.find((f) => f.id === fontFront)?.label ?? fontFront,
