@@ -85,6 +85,7 @@ export function JerseyCanvas({
   fontFront = "'Anton', 'Impact', sans-serif",
   fontBack = "'Anton', 'Impact', sans-serif",
   category = "men",
+  template = "solid",
 }: Props) {
   const sleeveless = sport === "basket";
   const showBaseballButtons = ["beisbol", "softball", "kickingball"].includes(sport);
@@ -92,7 +93,7 @@ export function JerseyCanvas({
   // Silhouette adjust by category
   const shape = useMemo(() => {
     if (category === "kids") return { scale: 0.82, tx: 45, waist: 0 };
-    if (category === "women") return { scale: 0.95, tx: 12, waist: 12 }; // slight taper
+    if (category === "women") return { scale: 0.95, tx: 12, waist: 12 };
     return { scale: 1, tx: 0, waist: 0 };
   }, [category]);
 
@@ -102,6 +103,7 @@ export function JerseyCanvas({
       className="mx-auto h-auto w-full max-w-md drop-shadow-2xl"
       xmlns="http://www.w3.org/2000/svg"
     >
+      <TemplateDefs primary={primary} secondary={secondary} accent={accent} />
       <defs>
         <linearGradient id="shade" x1="0" x2="0" y1="0" y2="1">
           <stop offset="0%" stopColor="#000" stopOpacity="0" />
@@ -114,13 +116,15 @@ export function JerseyCanvas({
           sleeveless={sleeveless}
           primary={primary}
           secondary={secondary}
+          accent={accent}
           cut={cut}
           waistTaper={shape.waist}
+          template={template}
         />
         <rect x="0" y="0" width="500" height="620" fill="url(#shade)" pointerEvents="none" />
-        <NeckCutShape cut={cut} accent={accent} />
+        <NeckCutShape cut={cut} accent={accent} template={template} secondary={secondary} primary={primary} />
         {showBaseballButtons && (cut === "btn2" || cut === "btn6") && (
-          <ButtonsPlacket cut={cut} />
+          <ButtonsPlacket cut={cut} template={template} accent={accent} />
         )}
         {view === "front" ? (
           <FrontContent teamName={teamName} accent={accent} fontFamily={fontFront} />
@@ -131,6 +135,30 @@ export function JerseyCanvas({
     </svg>
   );
 }
+
+function TemplateDefs({ primary, secondary, accent }: { primary: string; secondary: string; accent: string }) {
+  return (
+    <defs>
+      <linearGradient id="tplGradient" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stopColor={primary} />
+        <stop offset="100%" stopColor={secondary} />
+      </linearGradient>
+      <pattern id="tplCamo" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+        <rect width="80" height="80" fill={primary} />
+        <path d="M0 20 Q20 5 40 20 T80 20 L80 40 Q60 55 40 40 T0 40 Z" fill={secondary} opacity="0.55" />
+        <path d="M10 55 Q30 45 55 60 T80 70 L80 80 L0 80 L0 65 Z" fill={accent} opacity="0.35" />
+        <ellipse cx="60" cy="15" rx="12" ry="7" fill={accent} opacity="0.28" />
+        <ellipse cx="20" cy="65" rx="10" ry="6" fill={secondary} opacity="0.5" />
+      </pattern>
+      <pattern id="tplScales" x="0" y="0" width="18" height="16" patternUnits="userSpaceOnUse">
+        <rect width="18" height="16" fill={primary} />
+        <path d="M9 0 A9 9 0 0 1 18 8 A9 9 0 0 1 9 16 A9 9 0 0 1 0 8 A9 9 0 0 1 9 0"
+              fill="none" stroke={secondary} strokeWidth="0.8" opacity="0.55" />
+      </pattern>
+    </defs>
+  );
+}
+
 
 function JerseyShape({
   sleeveless, primary, secondary, cut, waistTaper,
