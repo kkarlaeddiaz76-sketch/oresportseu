@@ -618,6 +618,64 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
   );
 }
 
+const TEXT_COLORS = [
+  { c: "#FFFFFF", n: "Blanco" },
+  { c: "#000000", n: "Negro" },
+  { c: "#FF0000", n: "Rojo" },
+  { c: "#FFD700", n: "Dorado" },
+  { c: "#FFFF00", n: "Amarillo" },
+  { c: "#1E3A8A", n: "Azul Rey" },
+  { c: "#16A34A", n: "Verde" },
+  { c: "#F97316", n: "Naranja" },
+  { c: "#C0C0C0", n: "Plata" },
+];
+
+function TextColorPicker({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <div>
+      <Label className="text-xs">{label}</Label>
+      <div className="mt-1 flex flex-wrap items-center gap-1.5">
+        {TEXT_COLORS.map((t) => (
+          <button
+            key={t.c}
+            type="button"
+            title={t.n}
+            onClick={() => onChange(t.c)}
+            className={`h-7 w-7 rounded-full border-2 transition ${value.toUpperCase() === t.c.toUpperCase() ? "border-primary ring-2 ring-primary/40 scale-110" : "border-black/30 hover:border-black"}`}
+            style={{ background: t.c }}
+          />
+        ))}
+        <label className="ml-1 flex h-7 items-center gap-1 rounded-full border border-black/20 px-2 text-[10px] font-semibold uppercase text-black/70">
+          <input type="color" value={value} onChange={(e) => onChange(e.target.value)} className="h-4 w-4 cursor-pointer border-0 bg-transparent p-0" />
+          Custom
+        </label>
+      </div>
+    </div>
+  );
+}
+
+function SizeSlider({ label, value, onChange, min, max }: { label: string; value: number; onChange: (v: number) => void; min: number; max: number }) {
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <Label className="text-xs">{label}</Label>
+        <div className="flex items-center gap-1">
+          <button type="button" onClick={() => onChange(Math.max(min, value - 2))} className="rounded border border-black/30 px-2 text-xs font-bold hover:bg-black hover:text-white">−</button>
+          <span className="min-w-[2.5rem] text-center text-xs font-mono">{value}px</span>
+          <button type="button" onClick={() => onChange(Math.min(max, value + 2))} className="rounded border border-black/30 px-2 text-xs font-bold hover:bg-black hover:text-white">+</button>
+        </div>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="mt-1 w-full accent-primary"
+      />
+    </div>
+  );
+
 function ColorField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
     <label className="block text-xs font-semibold uppercase text-black/70">
