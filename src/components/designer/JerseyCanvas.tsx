@@ -135,13 +135,13 @@ export function JerseyCanvas({
         />
         <rect x="0" y="0" width="500" height="620" fill="url(#shade)" pointerEvents="none" />
         <NeckCutShape cut={cut} accent={accent} template={template} secondary={secondary} primary={primary} />
-        {showBaseballButtons && (cut === "btn2" || cut === "btn6") && (
+        {showBaseballButtons && view === "front" && (cut === "btn2" || cut === "btn6") && (
           <ButtonsPlacket cut={cut} template={template} accent={accent} />
         )}
         {view === "front" ? (
-          <FrontContent teamName={teamName} accent={accent} fontFamily={fontFront} />
+          <FrontContent teamName={teamName} accent={accent} fontFamily={fontFront} fontSize={teamNameSize} color={teamNameColor} />
         ) : (
-          <BackContent playerName={playerName} number={number} accent={accent} fontFamily={fontBack} />
+          <BackContent playerName={playerName} number={number} accent={accent} fontFamily={fontBack} nameSize={playerNameSize} numberSize={numberSize} nameColor={playerNameColor} numberColor={numberColor} />
         )}
       </g>
     </svg>
