@@ -312,8 +312,8 @@ function ButtonsPlacket({ cut, template, accent }: { cut: NeckCut; template: Tem
 
 
 function FrontContent({
-  teamName, accent, fontFamily,
-}: { teamName: string; accent: string; fontFamily: string }) {
+  teamName, accent, fontFamily, fontSize, color,
+}: { teamName: string; accent: string; fontFamily: string; fontSize: number; color: string }) {
   return (
     <g>
       {teamName && (
@@ -322,9 +322,9 @@ function FrontContent({
           y="290"
           textAnchor="middle"
           fontFamily={fontFamily}
-          fontSize="44"
+          fontSize={fontSize}
           fontWeight="800"
-          fill="#fff"
+          fill={color}
           stroke="#000"
           strokeWidth="2"
           style={{ letterSpacing: "2px" }}
@@ -338,8 +338,8 @@ function FrontContent({
 }
 
 function BackContent({
-  playerName, number, accent, fontFamily,
-}: { playerName: string; number: string; accent: string; fontFamily: string }) {
+  playerName, number, accent, fontFamily, nameSize, numberSize, nameColor, numberColor,
+}: { playerName: string; number: string; accent: string; fontFamily: string; nameSize: number; numberSize: number; nameColor: string; numberColor: string }) {
   return (
     <g>
       {playerName && (
@@ -348,9 +348,9 @@ function BackContent({
           y="180"
           textAnchor="middle"
           fontFamily={fontFamily}
-          fontSize="30"
+          fontSize={nameSize}
           fontWeight="700"
-          fill="#fff"
+          fill={nameColor}
           stroke="#000"
           strokeWidth="1.5"
           style={{ letterSpacing: "3px" }}
@@ -364,9 +364,9 @@ function BackContent({
           y="400"
           textAnchor="middle"
           fontFamily={fontFamily}
-          fontSize="180"
+          fontSize={numberSize}
           fontWeight="900"
-          fill="#fff"
+          fill={numberColor}
           stroke="#000"
           strokeWidth="4"
         >
