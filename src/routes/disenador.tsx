@@ -46,10 +46,10 @@ const SPORTS: { v: Sport; label: string }[] = [
   { v: "kickingball", label: "Kickingball" },
 ];
 
-const CATEGORIES: { v: Category; label: string; icon: string }[] = [
-  { v: "kids", label: "Niños", icon: "👦" },
-  { v: "women", label: "Dama", icon: "👩" },
-  { v: "men", label: "Hombre", icon: "👨" },
+const CATEGORIES: { v: Category; label: string }[] = [
+  { v: "kids", label: "Niños" },
+  { v: "women", label: "Damas" },
+  { v: "men", label: "Hombre" },
 ];
 
 const KIDS = ["4", "8", "12", "14", "16"];
