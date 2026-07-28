@@ -410,6 +410,8 @@ function DesignerPage() {
                     <Label>Nombre del Equipo</Label>
                     <Input value={teamName} onChange={(e) => setTeamName(e.target.value)} maxLength={14} />
                   </div>
+                  <SizeSlider label="Tamaño del texto" value={teamNameSize} onChange={setTeamNameSize} min={20} max={80} />
+                  <TextColorPicker label="Color del texto" value={teamNameColor} onChange={setTeamNameColor} />
                   <div>
                     <Label>Logo del Equipo (PNG/JPG)</Label>
                     <label className="mt-1 flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-black/30 p-4 text-sm font-semibold text-black hover:border-primary hover:text-primary">
@@ -430,15 +432,21 @@ function DesignerPage() {
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-[1fr_120px] gap-3">
-                  <div>
-                    <Label>Nombre Jugador</Label>
-                    <Input value={playerName} onChange={(e) => setPlayerName(e.target.value)} maxLength={14} />
+                <div className="space-y-3">
+                  <div className="grid grid-cols-[1fr_120px] gap-3">
+                    <div>
+                      <Label>Nombre Jugador</Label>
+                      <Input value={playerName} onChange={(e) => setPlayerName(e.target.value)} maxLength={14} />
+                    </div>
+                    <div>
+                      <Label>Número</Label>
+                      <Input value={number} onChange={(e) => setNumber(e.target.value.replace(/\D/g, "").slice(0, 2))} inputMode="numeric" />
+                    </div>
                   </div>
-                  <div>
-                    <Label>Número</Label>
-                    <Input value={number} onChange={(e) => setNumber(e.target.value.replace(/\D/g, "").slice(0, 2))} inputMode="numeric" />
-                  </div>
+                  <SizeSlider label="Tamaño del nombre" value={playerNameSize} onChange={setPlayerNameSize} min={16} max={60} />
+                  <TextColorPicker label="Color del nombre" value={playerNameColor} onChange={setPlayerNameColor} />
+                  <SizeSlider label="Tamaño del número" value={numberSize} onChange={setNumberSize} min={100} max={260} />
+                  <TextColorPicker label="Color del número" value={numberColor} onChange={setNumberColor} />
                 </div>
               )}
             </Panel>
