@@ -223,6 +223,12 @@ function DesignerPage() {
                 fontBack={fontBackFamily}
                 category={category}
                 template={template}
+                teamNameSize={teamNameSize}
+                playerNameSize={playerNameSize}
+                numberSize={numberSize}
+                teamNameColor={teamNameColor}
+                playerNameColor={playerNameColor}
+                numberColor={numberColor}
               />
 
 
