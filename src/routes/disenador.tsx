@@ -73,6 +73,12 @@ function DesignerPage() {
   const [fontBack, setFontBack] = useState("flipbash");
   const [designSize, setDesignSize] = useState<string>("L");
   const [template, setTemplate] = useState<Template>("solid");
+  const [teamNameSize, setTeamNameSize] = useState(44);
+  const [playerNameSize, setPlayerNameSize] = useState(30);
+  const [numberSize, setNumberSize] = useState(180);
+  const [teamNameColor, setTeamNameColor] = useState("#FFFFFF");
+  const [playerNameColor, setPlayerNameColor] = useState("#FFFFFF");
+  const [numberColor, setNumberColor] = useState("#FFFFFF");
   const [showSummary, setShowSummary] = useState(false);
   const { url: logoUrl, set: setLogo } = useObjectUrl();
 
