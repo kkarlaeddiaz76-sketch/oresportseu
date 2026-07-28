@@ -292,7 +292,7 @@ function DesignerPage() {
                       category === c.v ? "border-primary bg-primary text-white" : "border-black/20 bg-white text-black hover:border-black"
                     }`}
                   >
-                    <span className="mr-1 text-base">{c.icon}</span>{c.label}
+                    {c.label}
                   </button>
                 ))}
               </div>
