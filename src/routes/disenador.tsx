@@ -46,10 +46,10 @@ const SPORTS: { v: Sport; label: string }[] = [
   { v: "kickingball", label: "Kickingball" },
 ];
 
-const CATEGORIES: { v: Category; label: string; icon: string }[] = [
-  { v: "kids", label: "Niños", icon: "👦" },
-  { v: "women", label: "Dama", icon: "👩" },
-  { v: "men", label: "Hombre", icon: "👨" },
+const CATEGORIES: { v: Category; label: string }[] = [
+  { v: "kids", label: "Niños" },
+  { v: "women", label: "Damas" },
+  { v: "men", label: "Hombre" },
 ];
 
 const KIDS = ["4", "8", "12", "14", "16"];
@@ -73,6 +73,12 @@ function DesignerPage() {
   const [fontBack, setFontBack] = useState("flipbash");
   const [designSize, setDesignSize] = useState<string>("L");
   const [template, setTemplate] = useState<Template>("solid");
+  const [teamNameSize, setTeamNameSize] = useState(44);
+  const [playerNameSize, setPlayerNameSize] = useState(30);
+  const [numberSize, setNumberSize] = useState(180);
+  const [teamNameColor, setTeamNameColor] = useState("#FFFFFF");
+  const [playerNameColor, setPlayerNameColor] = useState("#FFFFFF");
+  const [numberColor, setNumberColor] = useState("#FFFFFF");
   const [showSummary, setShowSummary] = useState(false);
   const { url: logoUrl, set: setLogo } = useObjectUrl();
 
@@ -217,6 +223,12 @@ function DesignerPage() {
                 fontBack={fontBackFamily}
                 category={category}
                 template={template}
+                teamNameSize={teamNameSize}
+                playerNameSize={playerNameSize}
+                numberSize={numberSize}
+                teamNameColor={teamNameColor}
+                playerNameColor={playerNameColor}
+                numberColor={numberColor}
               />
 
 
@@ -292,7 +304,7 @@ function DesignerPage() {
                       category === c.v ? "border-primary bg-primary text-white" : "border-black/20 bg-white text-black hover:border-black"
                     }`}
                   >
-                    <span className="mr-1 text-base">{c.icon}</span>{c.label}
+                    {c.label}
                   </button>
                 ))}
               </div>
@@ -398,6 +410,8 @@ function DesignerPage() {
                     <Label>Nombre del Equipo</Label>
                     <Input value={teamName} onChange={(e) => setTeamName(e.target.value)} maxLength={14} />
                   </div>
+                  <SizeSlider label="Tamaño del texto" value={teamNameSize} onChange={setTeamNameSize} min={20} max={80} />
+                  <TextColorPicker label="Color del texto" value={teamNameColor} onChange={setTeamNameColor} />
                   <div>
                     <Label>Logo del Equipo (PNG/JPG)</Label>
                     <label className="mt-1 flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-black/30 p-4 text-sm font-semibold text-black hover:border-primary hover:text-primary">
@@ -418,15 +432,21 @@ function DesignerPage() {
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-[1fr_120px] gap-3">
-                  <div>
-                    <Label>Nombre Jugador</Label>
-                    <Input value={playerName} onChange={(e) => setPlayerName(e.target.value)} maxLength={14} />
+                <div className="space-y-3">
+                  <div className="grid grid-cols-[1fr_120px] gap-3">
+                    <div>
+                      <Label>Nombre Jugador</Label>
+                      <Input value={playerName} onChange={(e) => setPlayerName(e.target.value)} maxLength={14} />
+                    </div>
+                    <div>
+                      <Label>Número</Label>
+                      <Input value={number} onChange={(e) => setNumber(e.target.value.replace(/\D/g, "").slice(0, 2))} inputMode="numeric" />
+                    </div>
                   </div>
-                  <div>
-                    <Label>Número</Label>
-                    <Input value={number} onChange={(e) => setNumber(e.target.value.replace(/\D/g, "").slice(0, 2))} inputMode="numeric" />
-                  </div>
+                  <SizeSlider label="Tamaño del nombre" value={playerNameSize} onChange={setPlayerNameSize} min={16} max={60} />
+                  <TextColorPicker label="Color del nombre" value={playerNameColor} onChange={setPlayerNameColor} />
+                  <SizeSlider label="Tamaño del número" value={numberSize} onChange={setNumberSize} min={100} max={260} />
+                  <TextColorPicker label="Color del número" value={numberColor} onChange={setNumberColor} />
                 </div>
               )}
             </Panel>
@@ -597,6 +617,67 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
     </div>
   );
 }
+
+const TEXT_COLORS = [
+  { c: "#FFFFFF", n: "Blanco" },
+  { c: "#000000", n: "Negro" },
+  { c: "#FF0000", n: "Rojo" },
+  { c: "#FFD700", n: "Dorado" },
+  { c: "#FFFF00", n: "Amarillo" },
+  { c: "#1E3A8A", n: "Azul Rey" },
+  { c: "#16A34A", n: "Verde" },
+  { c: "#F97316", n: "Naranja" },
+  { c: "#C0C0C0", n: "Plata" },
+];
+
+function TextColorPicker({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <div>
+      <Label className="text-xs">{label}</Label>
+      <div className="mt-1 flex flex-wrap items-center gap-1.5">
+        {TEXT_COLORS.map((t) => (
+          <button
+            key={t.c}
+            type="button"
+            title={t.n}
+            onClick={() => onChange(t.c)}
+            className={`h-7 w-7 rounded-full border-2 transition ${value.toUpperCase() === t.c.toUpperCase() ? "border-primary ring-2 ring-primary/40 scale-110" : "border-black/30 hover:border-black"}`}
+            style={{ background: t.c }}
+          />
+        ))}
+        <label className="ml-1 flex h-7 items-center gap-1 rounded-full border border-black/20 px-2 text-[10px] font-semibold uppercase text-black/70">
+          <input type="color" value={value} onChange={(e) => onChange(e.target.value)} className="h-4 w-4 cursor-pointer border-0 bg-transparent p-0" />
+          Custom
+        </label>
+      </div>
+    </div>
+  );
+}
+
+function SizeSlider({ label, value, onChange, min, max }: { label: string; value: number; onChange: (v: number) => void; min: number; max: number }) {
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <Label className="text-xs">{label}</Label>
+        <div className="flex items-center gap-1">
+          <button type="button" onClick={() => onChange(Math.max(min, value - 2))} className="rounded border border-black/30 px-2 text-xs font-bold hover:bg-black hover:text-white">−</button>
+          <span className="min-w-[2.5rem] text-center text-xs font-mono">{value}px</span>
+          <button type="button" onClick={() => onChange(Math.min(max, value + 2))} className="rounded border border-black/30 px-2 text-xs font-bold hover:bg-black hover:text-white">+</button>
+        </div>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="mt-1 w-full accent-primary"
+      />
+    </div>
+  );
+}
+
+
 
 function ColorField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
