@@ -675,6 +675,9 @@ function SizeSlider({ label, value, onChange, min, max }: { label: string; value
       />
     </div>
   );
+}
+
+
 
 function ColorField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
