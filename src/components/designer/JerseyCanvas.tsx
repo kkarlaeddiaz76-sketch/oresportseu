@@ -76,6 +76,12 @@ interface Props {
   fontBack?: string;
   category?: Category;
   template?: Template;
+  teamNameSize?: number;
+  playerNameSize?: number;
+  numberSize?: number;
+  teamNameColor?: string;
+  playerNameColor?: string;
+  numberColor?: string;
 }
 
 
@@ -86,6 +92,12 @@ export function JerseyCanvas({
   fontBack = "'Anton', 'Impact', sans-serif",
   category = "men",
   template = "solid",
+  teamNameSize = 44,
+  playerNameSize = 30,
+  numberSize = 180,
+  teamNameColor = "#ffffff",
+  playerNameColor = "#ffffff",
+  numberColor = "#ffffff",
 }: Props) {
   const sleeveless = sport === "basket";
   const showBaseballButtons = ["beisbol", "softball", "kickingball"].includes(sport);
