@@ -186,20 +186,20 @@ function DesignerPage() {
           <SizeGuideButton />
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[1fr_420px]">
-          {/* PREVIEW */}
-          <div className="rounded-2xl border-2 border-black bg-white p-6">
+        <div className="grid gap-8 lg:grid-cols-[1fr_420px] lg:items-start">
+          {/* PREVIEW — sticky on desktop, sticky-top on mobile */}
+          <div className="sticky top-16 z-20 self-start rounded-2xl border-2 border-black bg-white p-4 md:p-6 lg:top-24 lg:max-h-[calc(100vh-120px)] lg:overflow-hidden">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <div className="flex gap-1 rounded-full border border-black p-1">
                 <button
                   onClick={() => { setView("front"); setLogoSelected(false); }}
-                  className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase ${view === "front" ? "bg-black text-white" : "text-black"}`}
+                  className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase transition ${view === "front" ? "bg-black text-white" : "text-black"}`}
                 >
                   Frente
                 </button>
                 <button
                   onClick={() => { setView("back"); setLogoSelected(false); }}
-                  className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase ${view === "back" ? "bg-black text-white" : "text-black"}`}
+                  className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase transition ${view === "back" ? "bg-black text-white" : "text-black"}`}
                 >
                   Espalda
                 </button>
@@ -215,26 +215,48 @@ function DesignerPage() {
             </div>
             <div
               ref={previewRef}
-              className="relative rounded-xl bg-gradient-to-b from-neutral-100 to-neutral-200 p-6 select-none"
+              className="relative mx-auto max-h-[55vh] w-full max-w-md overflow-hidden rounded-xl bg-gradient-to-b from-neutral-100 to-neutral-200 p-3 select-none md:max-h-[65vh] lg:max-h-[calc(100vh-220px)] lg:p-6 transition-all"
               onPointerDown={(e) => {
                 if (e.target === e.currentTarget) setLogoSelected(false);
               }}
             >
-              <JerseyCanvas
-                sport={sport} view={view} cut={cut}
-                primary={primary} secondary={secondary} accent={accent}
-                teamName={teamName} playerName={playerName} number={number}
-                fontFront={fontFrontFamily}
-                fontBack={fontBackFamily}
-                category={category}
-                template={template}
-                teamNameSize={teamNameSize}
-                playerNameSize={playerNameSize}
-                numberSize={numberSize}
-                teamNameColor={teamNameColor}
-                playerNameColor={playerNameColor}
-                numberColor={numberColor}
-              />
+              {sport === "basket" ? (
+                <BasketballMockup
+                  view={view}
+                  jerseyColor={primary}
+                  shortsColor={shortsColor}
+                  sleeveColor={sleeveColor}
+                  trimColor={accent}
+                  teamName={teamName}
+                  playerName={playerName}
+                  number={number}
+                  fontFront={fontFrontFamily}
+                  fontBack={fontBackFamily}
+                  teamNameSize={teamNameSize}
+                  playerNameSize={playerNameSize}
+                  numberSize={numberSize}
+                  teamNameColor={teamNameColor}
+                  playerNameColor={playerNameColor}
+                  numberColor={numberColor}
+                  showSleeves={showSleeves}
+                />
+              ) : (
+                <JerseyCanvas
+                  sport={sport} view={view} cut={cut}
+                  primary={primary} secondary={secondary} accent={accent}
+                  teamName={teamName} playerName={playerName} number={number}
+                  fontFront={fontFrontFamily}
+                  fontBack={fontBackFamily}
+                  category={category}
+                  template={template}
+                  teamNameSize={teamNameSize}
+                  playerNameSize={playerNameSize}
+                  numberSize={numberSize}
+                  teamNameColor={teamNameColor}
+                  playerNameColor={playerNameColor}
+                  numberColor={numberColor}
+                />
+              )}
 
 
               {logoUrl && (
