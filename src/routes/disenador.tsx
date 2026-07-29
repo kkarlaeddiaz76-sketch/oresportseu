@@ -403,12 +403,31 @@ function DesignerPage() {
 
             {/* Colors */}
             <Panel title="Colores">
-
-              <div className="grid grid-cols-3 gap-3">
-                <ColorField label="Principal" value={primary} onChange={setPrimary} />
-                <ColorField label="Mangas" value={secondary} onChange={setSecondary} />
-                <ColorField label="Acento" value={accent} onChange={setAccent} />
-              </div>
+              {sport === "basket" ? (
+                <>
+                  <div className="grid grid-cols-2 gap-3">
+                    <ColorField label="Camiseta" value={primary} onChange={setPrimary} />
+                    <ColorField label="Short" value={shortsColor} onChange={setShortsColor} />
+                    <ColorField label="Bordes / Cuello" value={accent} onChange={setAccent} />
+                    <ColorField label="Codera / Manga" value={sleeveColor} onChange={setSleeveColor} />
+                  </div>
+                  <label className="mt-3 flex cursor-pointer items-center gap-2 text-xs font-semibold text-black">
+                    <input
+                      type="checkbox"
+                      checked={showSleeves}
+                      onChange={(e) => setShowSleeves(e.target.checked)}
+                      className="h-4 w-4 accent-primary"
+                    />
+                    Añadir coderas / mangas de compresión
+                  </label>
+                </>
+              ) : (
+                <div className="grid grid-cols-3 gap-3">
+                  <ColorField label="Principal" value={primary} onChange={setPrimary} />
+                  <ColorField label="Mangas" value={secondary} onChange={setSecondary} />
+                  <ColorField label="Acento" value={accent} onChange={setAccent} />
+                </div>
+              )}
             </Panel>
 
             {/* Fonts */}
