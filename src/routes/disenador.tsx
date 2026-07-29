@@ -66,6 +66,10 @@ function DesignerPage() {
   const [primary, setPrimary] = useState("#000000");
   const [secondary, setSecondary] = useState("#FF0000");
   const [accent, setAccent] = useState("#FFFFFF");
+  // Basketball-specific extra zones
+  const [shortsColor, setShortsColor] = useState("#000000");
+  const [sleeveColor, setSleeveColor] = useState("#FF0000");
+  const [showSleeves, setShowSleeves] = useState(false);
   const [teamName, setTeamName] = useState("Monarcas");
   const [playerName, setPlayerName] = useState("PEREZ");
   const [number, setNumber] = useState("23");
