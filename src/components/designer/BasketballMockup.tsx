@@ -131,8 +131,9 @@ export function BasketballMockup({
           <path d={armholeRight} fill="none" stroke={trimColor} strokeWidth="9" strokeLinecap="round" />
           <path d={neckTrim} fill="none" stroke={trimColor} strokeWidth="9" strokeLinecap="round" />
           {/* shoulder trim */}
-          <path d="M 174 122 L 210 96 L 252 92" fill="none" stroke={trimColor} strokeWidth="7" strokeLinecap="round" />
-          <path d="M 426 122 L 390 96 L 348 92" fill="none" stroke={trimColor} strokeWidth="7" strokeLinecap="round" />
+          <path d="M 196 116 L 224 100 L 250 96" fill="none" stroke={trimColor} strokeWidth="7" strokeLinecap="round" />
+          <path d="M 404 116 L 376 100 L 350 96" fill="none" stroke={trimColor} strokeWidth="7" strokeLinecap="round" />
+
           {/* bottom hem */}
           <path d="M 196 428 Q 300 450 404 428" stroke={trimColor} strokeWidth="8" fill="none" />
           <path d={torso} fill="url(#bkShade)" pointerEvents="none" />
