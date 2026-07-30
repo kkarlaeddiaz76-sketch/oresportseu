@@ -13,6 +13,8 @@ import {
   useObjectUrl,
 } from "@/components/designer/JerseyCanvas";
 import { BasketballMockup } from "@/components/designer/BasketballMockup";
+import { SoccerMockup } from "@/components/designer/SoccerMockup";
+
 
 import { SizeGuideButton } from "@/components/site/SizeGuide";
 import { waLink } from "@/components/site/WhatsAppButton";
@@ -188,7 +190,7 @@ function DesignerPage() {
 
         <div className="grid gap-8 lg:grid-cols-[1fr_420px] lg:items-start">
           {/* PREVIEW — sticky on desktop, sticky-top on mobile */}
-          <div className="sticky top-16 z-20 self-start rounded-2xl border-2 border-black bg-white p-4 md:p-6 lg:top-24 lg:max-h-[calc(100vh-120px)] lg:overflow-hidden">
+          <div className="sticky top-16 z-20 self-start rounded-2xl border-2 border-black bg-white p-4 md:p-6 lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <div className="flex gap-1 rounded-full border border-black p-1">
                 <button
@@ -215,7 +217,7 @@ function DesignerPage() {
             </div>
             <div
               ref={previewRef}
-              className="relative mx-auto max-h-[55vh] w-full max-w-md overflow-hidden rounded-xl bg-gradient-to-b from-neutral-100 to-neutral-200 p-3 select-none md:max-h-[65vh] lg:max-h-[calc(100vh-220px)] lg:p-6 transition-all"
+              className="relative mx-auto flex w-full max-w-md items-center justify-center overflow-visible rounded-xl bg-gradient-to-b from-neutral-100 to-neutral-200 p-3 select-none lg:p-6 transition-all"
               onPointerDown={(e) => {
                 if (e.target === e.currentTarget) setLogoSelected(false);
               }}
@@ -240,6 +242,24 @@ function DesignerPage() {
                   numberColor={numberColor}
                   showSleeves={showSleeves}
                 />
+              ) : sport === "futbol" && cut === "vneck" ? (
+                <SoccerMockup
+                  view={view}
+                  jerseyColor={primary}
+                  sleeveColor={secondary}
+                  trimColor={accent}
+                  teamName={teamName}
+                  playerName={playerName}
+                  number={number}
+                  fontFront={fontFrontFamily}
+                  fontBack={fontBackFamily}
+                  teamNameSize={teamNameSize}
+                  playerNameSize={playerNameSize}
+                  numberSize={numberSize}
+                  teamNameColor={teamNameColor}
+                  playerNameColor={playerNameColor}
+                  numberColor={numberColor}
+                />
               ) : (
                 <JerseyCanvas
                   sport={sport} view={view} cut={cut}
@@ -257,6 +277,7 @@ function DesignerPage() {
                   numberColor={numberColor}
                 />
               )}
+
 
 
               {logoUrl && (
