@@ -47,25 +47,23 @@ export function BasketballMockup({
   const front = view === "front";
 
   // Neckline: deeper scoop on the front, shallow on the back
-  const neckline = front
-    ? "Q 300 148 348 92"
-    : "Q 300 116 348 92";
+  const neckline = front ? "Q 300 156 350 96" : "Q 300 124 350 96";
 
-  // Tank-top silhouette (shoulders -> armhole -> side seam -> hem)
+  // Tank-top silhouette (shoulder strap -> armhole -> side seam -> hem)
   const torso =
-    `M 174 122 L 210 96 L 252 92 ${neckline} L 390 96 L 426 122 ` +
-    `C 404 168 392 200 390 244 ` +
-    `L 400 300 L 406 436 ` +
+    `M 196 116 L 224 100 L 250 96 ${neckline} L 376 100 L 404 116 ` +
+    `C 398 164 394 204 396 250 ` +
+    `L 402 320 L 406 436 ` +
     `Q 300 458 194 436 ` +
-    `L 200 300 L 210 244 ` +
-    `C 208 200 196 168 174 122 Z`;
+    `L 198 320 L 204 250 ` +
+    `C 206 204 202 164 196 116 Z`;
 
-  const armholeLeft = "M 174 122 C 196 168 208 200 210 244";
-  const armholeRight = "M 426 122 C 404 168 392 200 390 244";
+  const armholeLeft = "M 200 124 C 206 176 204 214 204 250";
+  const armholeRight = "M 400 124 C 394 176 396 214 396 250";
 
   const neckTrim = front
-    ? "M 252 92 Q 300 148 348 92"
-    : "M 252 92 Q 300 116 348 92";
+    ? "M 250 96 Q 300 156 350 96"
+    : "M 250 96 Q 300 124 350 96";
 
   // Shorts
   const shorts =
