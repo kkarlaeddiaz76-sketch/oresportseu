@@ -1,5 +1,3 @@
-import basketFront from "@/assets/basket_front.png.asset.json";
-import basketBack from "@/assets/basket_back.png.asset.json";
 import type { View } from "./JerseyCanvas";
 
 interface Props {
@@ -23,12 +21,9 @@ interface Props {
 }
 
 /**
- * Basketball uniform mockup engine.
- * Renders a white base uniform photo and overlays colored SVG zones
- * using mix-blend-mode: multiply so 3D shadows and fabric folds
- * from the base photo are preserved.
- *
- * viewBox matches the base image dimensions (1024 x 1280).
+ * Basketball uniform mockup — fully vector (tank jersey + shorts).
+ * Proportions drawn to scale so colors, trims and text always align.
+ * viewBox: 0 0 600 820
  */
 export function BasketballMockup({
   view,
@@ -49,110 +44,149 @@ export function BasketballMockup({
   numberColor,
   showSleeves = false,
 }: Props) {
-  const base = view === "front" ? basketFront.url : basketBack.url;
+  const front = view === "front";
 
-  // Approximate zone geometry (aligned to the generated white mockup 1024x1280)
-  // Jersey torso: rounded rectangle ~ x 280..740, y 60..640
-  const jerseyPath =
-    "M 340 70 Q 512 40 684 70 L 720 130 L 745 640 Q 700 660 512 660 Q 324 660 279 640 L 304 130 Z";
+  // Neckline: deeper scoop on the front, shallow on the back
+  const neckline = front ? "Q 300 156 350 96" : "Q 300 124 350 96";
 
-  // Shorts: two legs with waistband
-  const shortsPath =
-    "M 300 660 L 720 660 L 735 730 L 720 1140 Q 620 1160 512 1150 Q 512 900 512 900 Q 512 1160 404 1150 Q 296 1160 289 1140 L 304 730 Z";
+  // Tank-top silhouette (shoulder strap -> armhole -> side seam -> hem)
+  const torso =
+    `M 196 116 L 224 100 L 250 96 ${neckline} L 376 100 L 404 116 ` +
+    `C 398 164 394 204 396 250 ` +
+    `L 402 320 L 406 436 ` +
+    `Q 300 458 194 436 ` +
+    `L 198 320 L 204 250 ` +
+    `C 206 204 202 164 196 116 Z`;
 
-  // Neck/trim ring (front & back)
-  const neckPath =
-    view === "front"
-      ? "M 430 62 Q 512 105 594 62 Q 594 130 512 130 Q 430 130 430 62 Z"
-      : "M 420 45 Q 512 70 604 45 Q 604 95 512 95 Q 420 95 420 45 Z";
+  const armholeLeft = "M 200 124 C 206 176 204 214 204 250";
+  const armholeRight = "M 400 124 C 394 176 396 214 396 250";
 
-  // Armhole trim
-  const armholeLeft = "M 280 130 Q 260 260 300 400 L 340 380 Q 330 260 340 150 Z";
-  const armholeRight = "M 744 130 Q 764 260 724 400 L 684 380 Q 694 260 684 150 Z";
+  const neckTrim = front
+    ? "M 250 96 Q 300 156 350 96"
+    : "M 250 96 Q 300 124 350 96";
+
+  // Shorts
+  const shorts =
+    "M 192 470 L 408 470 L 418 546 L 406 742 Q 358 756 314 744 L 300 596 L 286 744 Q 242 756 194 742 L 182 546 Z";
 
   return (
     <div className="relative mx-auto w-full max-w-md">
       <svg
-        viewBox="0 0 1024 1280"
+        viewBox="0 0 600 820"
         xmlns="http://www.w3.org/2000/svg"
         className="h-auto w-full drop-shadow-2xl"
       >
-        {/* Base white uniform photo */}
-        <image
-          href={base}
-          x="0"
-          y="0"
-          width="1024"
-          height="1280"
-          preserveAspectRatio="xMidYMid meet"
-        />
+        <defs>
+          <linearGradient id="bkShade" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stopColor="#000" stopOpacity="0.3" />
+            <stop offset="20%" stopColor="#000" stopOpacity="0.05" />
+            <stop offset="48%" stopColor="#fff" stopOpacity="0.12" />
+            <stop offset="80%" stopColor="#000" stopOpacity="0.07" />
+            <stop offset="100%" stopColor="#000" stopOpacity="0.32" />
+          </linearGradient>
+          <linearGradient id="bkFold" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor="#fff" stopOpacity="0.14" />
+            <stop offset="65%" stopColor="#000" stopOpacity="0" />
+            <stop offset="100%" stopColor="#000" stopOpacity="0.24" />
+          </linearGradient>
+        </defs>
 
-        {/* Color zones — multiply blend preserves shadows/folds from base */}
-        <g style={{ mixBlendMode: "multiply" }}>
-          <path d={jerseyPath} fill={jerseyColor} />
-          <path d={shortsPath} fill={shortsColor} />
-          {/* Trim (neck + armholes) as accent color */}
-          <path d={neckPath} fill={trimColor} opacity="0.95" />
-          <path d={armholeLeft} fill={trimColor} opacity="0.55" />
-          <path d={armholeRight} fill={trimColor} opacity="0.55" />
-          {/* Optional compression sleeves (coderas) */}
-          {showSleeves && (
-            <>
-              <ellipse cx="240" cy="360" rx="70" ry="140" fill={sleeveColor} opacity="0.9" />
-              <ellipse cx="784" cy="360" rx="70" ry="140" fill={sleeveColor} opacity="0.9" />
-            </>
-          )}
-          {/* Waistband highlight */}
-          <rect x="290" y="660" width="445" height="42" fill={trimColor} opacity="0.85" />
+        {/* ---------- COMPRESSION SLEEVES (behind the jersey) ---------- */}
+        {showSleeves && (
+          <g>
+            <path
+              d="M 178 150 C 146 240 142 330 152 412 L 206 408 C 198 320 200 236 214 176 Z"
+              fill={sleeveColor}
+              stroke="#000"
+              strokeWidth="2"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M 422 150 C 454 240 458 330 448 412 L 394 408 C 402 320 400 236 386 176 Z"
+              fill={sleeveColor}
+              stroke="#000"
+              strokeWidth="2"
+              strokeLinejoin="round"
+            />
+          </g>
+        )}
+
+        {/* ---------- SHORTS ---------- */}
+        <g>
+          <path d={shorts} fill={shortsColor} stroke="#000" strokeWidth="2.5" strokeLinejoin="round" />
+          <rect x="182" y="452" width="236" height="30" rx="8" fill={trimColor} stroke="#000" strokeWidth="2.5" />
+          <path d="M 194 486 L 188 738" stroke={trimColor} strokeWidth="8" fill="none" strokeLinecap="round" />
+          <path d="M 406 486 L 412 738" stroke={trimColor} strokeWidth="8" fill="none" strokeLinecap="round" />
+          <path d="M 194 730 Q 240 744 286 734" stroke={trimColor} strokeWidth="7" fill="none" />
+          <path d="M 314 734 Q 360 744 406 730" stroke={trimColor} strokeWidth="7" fill="none" />
+          <path d={shorts} fill="url(#bkShade)" pointerEvents="none" />
+          <path d={shorts} fill="url(#bkFold)" pointerEvents="none" />
         </g>
 
-        {/* Text overlays — rendered above the mockup */}
-        {view === "front" && teamName && (
+        {/* ---------- JERSEY ---------- */}
+        <g>
+          <path d={torso} fill={jerseyColor} stroke="#000" strokeWidth="2.5" strokeLinejoin="round" />
+          {/* armhole + neck trim */}
+          <path d={armholeLeft} fill="none" stroke={trimColor} strokeWidth="9" strokeLinecap="round" />
+          <path d={armholeRight} fill="none" stroke={trimColor} strokeWidth="9" strokeLinecap="round" />
+          <path d={neckTrim} fill="none" stroke={trimColor} strokeWidth="9" strokeLinecap="round" />
+          {/* shoulder trim */}
+          <path d="M 196 116 L 224 100 L 250 96" fill="none" stroke={trimColor} strokeWidth="7" strokeLinecap="round" />
+          <path d="M 404 116 L 376 100 L 350 96" fill="none" stroke={trimColor} strokeWidth="7" strokeLinecap="round" />
+
+          {/* bottom hem */}
+          <path d="M 196 428 Q 300 450 404 428" stroke={trimColor} strokeWidth="8" fill="none" />
+          <path d={torso} fill="url(#bkShade)" pointerEvents="none" />
+          <path d={torso} fill="url(#bkFold)" pointerEvents="none" />
+        </g>
+
+        {/* ---------- TEXT ---------- */}
+        {front && teamName && (
           <text
-            x="512"
-            y="380"
+            x="300"
+            y="268"
             textAnchor="middle"
             fontFamily={fontFront}
-            fontSize={teamNameSize * 3.2}
+            fontSize={teamNameSize}
             fontWeight="800"
             fill={teamNameColor}
             stroke="#000"
-            strokeWidth="3"
-            style={{ letterSpacing: "4px" }}
+            strokeWidth="1.5"
+            style={{ letterSpacing: "2px" }}
           >
             {teamName.toUpperCase().slice(0, 14)}
           </text>
         )}
 
-        {view === "back" && (
+        {!front && (
           <>
             {playerName && (
               <text
-                x="512"
-                y="200"
+                x="300"
+                y="186"
                 textAnchor="middle"
                 fontFamily={fontBack}
-                fontSize={playerNameSize * 3.2}
+                fontSize={playerNameSize}
                 fontWeight="700"
                 fill={playerNameColor}
                 stroke="#000"
-                strokeWidth="2"
-                style={{ letterSpacing: "5px" }}
+                strokeWidth="1.2"
+                style={{ letterSpacing: "3px" }}
               >
                 {playerName.toUpperCase().slice(0, 14)}
               </text>
             )}
             {number && (
               <text
-                x="512"
-                y="480"
+                x="300"
+                y="360"
                 textAnchor="middle"
                 fontFamily={fontBack}
-                fontSize={numberSize * 2.2}
+                fontSize={numberSize}
                 fontWeight="900"
                 fill={numberColor}
                 stroke="#000"
-                strokeWidth="6"
+                strokeWidth="3"
               >
                 {number.slice(0, 2)}
               </text>
