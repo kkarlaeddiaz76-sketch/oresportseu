@@ -21,8 +21,8 @@ interface Props {
 }
 
 /**
- * Basketball uniform mockup — fully vector (jersey + shorts).
- * Drawn to scale so colors, trims and text always align perfectly.
+ * Basketball uniform mockup — fully vector (tank jersey + shorts).
+ * Proportions drawn to scale so colors, trims and text always align.
  * viewBox: 0 0 600 820
  */
 export function BasketballMockup({
@@ -46,23 +46,32 @@ export function BasketballMockup({
 }: Props) {
   const front = view === "front";
 
-  // --- Tank top torso ---------------------------------------------------
-  const torso = front
-    ? "M 205 96 L 258 78 Q 300 108 342 78 L 395 96 Q 430 112 442 152 L 462 236 L 414 254 L 404 232 L 412 424 Q 300 446 188 424 L 196 232 L 186 254 L 138 236 L 158 152 Q 170 112 205 96 Z"
-    : "M 205 96 L 262 80 Q 300 96 338 80 L 395 96 Q 430 112 442 152 L 462 236 L 414 254 L 404 232 L 412 424 Q 300 446 188 424 L 196 232 L 186 254 L 138 236 L 158 152 Q 170 112 205 96 Z";
+  // Neckline: deeper scoop on the front, shallow on the back
+  const neckline = front
+    ? "Q 300 148 348 92"
+    : "Q 300 116 348 92";
 
-  // Neck opening
-  const neck = front
-    ? "M 258 78 Q 300 108 342 78 Q 344 92 300 118 Q 256 92 258 78 Z"
-    : "M 262 80 Q 300 96 338 80 Q 338 92 300 104 Q 262 92 262 80 Z";
+  // Tank-top silhouette (shoulders -> armhole -> side seam -> hem)
+  const torso =
+    `M 174 122 L 210 96 L 252 92 ${neckline} L 294 0 ` // placeholder replaced below
+      .slice(0, 0) +
+    `M 174 122 L 210 96 L 252 92 ${neckline} L 390 96 L 426 122 ` +
+    `C 404 168 392 200 390 244 ` +
+    `L 400 300 L 406 436 ` +
+    `Q 300 458 194 436 ` +
+    `L 200 300 L 210 244 ` +
+    `C 208 200 196 168 174 122 Z`;
 
-  // Armholes (cut-outs of the tank)
-  const armL = "M 205 96 Q 168 150 172 244 L 196 232 Q 196 150 224 108 Z";
-  const armR = "M 395 96 Q 432 150 428 244 L 404 232 Q 404 150 376 108 Z";
+  const armholeLeft = "M 174 122 C 196 168 208 200 210 244";
+  const armholeRight = "M 426 122 C 404 168 392 200 390 244";
 
-  // --- Shorts -----------------------------------------------------------
+  const neckTrim = front
+    ? "M 252 92 Q 300 148 348 92"
+    : "M 252 92 Q 300 116 348 92";
+
+  // Shorts
   const shorts =
-    "M 196 452 L 404 452 L 416 520 L 404 730 Q 356 744 312 732 L 300 566 L 288 732 Q 244 744 196 730 L 184 520 Z";
+    "M 192 470 L 408 470 L 418 546 L 406 742 Q 358 756 314 744 L 300 596 L 286 744 Q 242 756 194 742 L 182 546 Z";
 
   return (
     <div className="relative mx-auto w-full max-w-md">
@@ -73,52 +82,63 @@ export function BasketballMockup({
       >
         <defs>
           <linearGradient id="bkShade" x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0%" stopColor="#000" stopOpacity="0.28" />
-            <stop offset="22%" stopColor="#000" stopOpacity="0.04" />
-            <stop offset="50%" stopColor="#fff" stopOpacity="0.1" />
-            <stop offset="80%" stopColor="#000" stopOpacity="0.06" />
-            <stop offset="100%" stopColor="#000" stopOpacity="0.3" />
+            <stop offset="0%" stopColor="#000" stopOpacity="0.3" />
+            <stop offset="20%" stopColor="#000" stopOpacity="0.05" />
+            <stop offset="48%" stopColor="#fff" stopOpacity="0.12" />
+            <stop offset="80%" stopColor="#000" stopOpacity="0.07" />
+            <stop offset="100%" stopColor="#000" stopOpacity="0.32" />
           </linearGradient>
           <linearGradient id="bkFold" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#fff" stopOpacity="0.12" />
-            <stop offset="70%" stopColor="#000" stopOpacity="0" />
-            <stop offset="100%" stopColor="#000" stopOpacity="0.22" />
+            <stop offset="0%" stopColor="#fff" stopOpacity="0.14" />
+            <stop offset="65%" stopColor="#000" stopOpacity="0" />
+            <stop offset="100%" stopColor="#000" stopOpacity="0.24" />
           </linearGradient>
         </defs>
+
+        {/* ---------- COMPRESSION SLEEVES (behind the jersey) ---------- */}
+        {showSleeves && (
+          <g>
+            <path
+              d="M 178 150 C 146 240 142 330 152 412 L 206 408 C 198 320 200 236 214 176 Z"
+              fill={sleeveColor}
+              stroke="#000"
+              strokeWidth="2"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M 422 150 C 454 240 458 330 448 412 L 394 408 C 402 320 400 236 386 176 Z"
+              fill={sleeveColor}
+              stroke="#000"
+              strokeWidth="2"
+              strokeLinejoin="round"
+            />
+          </g>
+        )}
 
         {/* ---------- SHORTS ---------- */}
         <g>
           <path d={shorts} fill={shortsColor} stroke="#000" strokeWidth="2.5" strokeLinejoin="round" />
-          {/* waistband */}
-          <rect x="184" y="440" width="232" height="30" rx="6" fill={trimColor} stroke="#000" strokeWidth="2.5" />
-          {/* side stripes */}
-          <path d="M 196 470 L 190 726" stroke={trimColor} strokeWidth="7" fill="none" strokeLinecap="round" />
-          <path d="M 404 470 L 410 726" stroke={trimColor} strokeWidth="7" fill="none" strokeLinecap="round" />
-          {/* leg hems */}
-          <path d="M 196 716 Q 244 730 288 720" stroke={trimColor} strokeWidth="6" fill="none" />
-          <path d="M 312 720 Q 356 730 404 716" stroke={trimColor} strokeWidth="6" fill="none" />
+          <rect x="182" y="452" width="236" height="30" rx="8" fill={trimColor} stroke="#000" strokeWidth="2.5" />
+          <path d="M 194 486 L 188 738" stroke={trimColor} strokeWidth="8" fill="none" strokeLinecap="round" />
+          <path d="M 406 486 L 412 738" stroke={trimColor} strokeWidth="8" fill="none" strokeLinecap="round" />
+          <path d="M 194 730 Q 240 744 286 734" stroke={trimColor} strokeWidth="7" fill="none" />
+          <path d="M 314 734 Q 360 744 406 730" stroke={trimColor} strokeWidth="7" fill="none" />
           <path d={shorts} fill="url(#bkShade)" pointerEvents="none" />
           <path d={shorts} fill="url(#bkFold)" pointerEvents="none" />
         </g>
 
-        {/* ---------- COMPRESSION SLEEVES ---------- */}
-        {showSleeves && (
-          <g>
-            <path d="M 150 210 Q 118 300 128 400 L 178 400 Q 172 300 194 232 Z" fill={sleeveColor} stroke="#000" strokeWidth="2" />
-            <path d="M 450 210 Q 482 300 472 400 L 422 400 Q 428 300 406 232 Z" fill={sleeveColor} stroke="#000" strokeWidth="2" />
-          </g>
-        )}
-
         {/* ---------- JERSEY ---------- */}
         <g>
           <path d={torso} fill={jerseyColor} stroke="#000" strokeWidth="2.5" strokeLinejoin="round" />
-          {/* armhole trim */}
-          <path d={armL} fill={trimColor} opacity="0.95" />
-          <path d={armR} fill={trimColor} opacity="0.95" />
-          {/* neck trim */}
-          <path d={neck} fill={trimColor} stroke="#000" strokeWidth="2" />
+          {/* armhole + neck trim */}
+          <path d={armholeLeft} fill="none" stroke={trimColor} strokeWidth="9" strokeLinecap="round" />
+          <path d={armholeRight} fill="none" stroke={trimColor} strokeWidth="9" strokeLinecap="round" />
+          <path d={neckTrim} fill="none" stroke={trimColor} strokeWidth="9" strokeLinecap="round" />
+          {/* shoulder trim */}
+          <path d="M 174 122 L 210 96 L 252 92" fill="none" stroke={trimColor} strokeWidth="7" strokeLinecap="round" />
+          <path d="M 426 122 L 390 96 L 348 92" fill="none" stroke={trimColor} strokeWidth="7" strokeLinecap="round" />
           {/* bottom hem */}
-          <path d="M 190 414 Q 300 436 410 414" stroke={trimColor} strokeWidth="8" fill="none" />
+          <path d="M 196 428 Q 300 450 404 428" stroke={trimColor} strokeWidth="8" fill="none" />
           <path d={torso} fill="url(#bkShade)" pointerEvents="none" />
           <path d={torso} fill="url(#bkFold)" pointerEvents="none" />
         </g>
@@ -127,7 +147,7 @@ export function BasketballMockup({
         {front && teamName && (
           <text
             x="300"
-            y="248"
+            y="268"
             textAnchor="middle"
             fontFamily={fontFront}
             fontSize={teamNameSize}
@@ -146,7 +166,7 @@ export function BasketballMockup({
             {playerName && (
               <text
                 x="300"
-                y="168"
+                y="186"
                 textAnchor="middle"
                 fontFamily={fontBack}
                 fontSize={playerNameSize}
@@ -162,7 +182,7 @@ export function BasketballMockup({
             {number && (
               <text
                 x="300"
-                y="340"
+                y="360"
                 textAnchor="middle"
                 fontFamily={fontBack}
                 fontSize={numberSize}
