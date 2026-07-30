@@ -47,16 +47,17 @@ export function SoccerMockup({
 
   // Body silhouette (shoulders -> bottom hem), sleeves included
   const body = front
-    ? "M 640 330 Q 960 245 1290 330 L 1490 470 L 1450 860 L 1300 900 L 1330 1690 Q 960 1745 585 1690 L 615 900 L 465 860 L 425 470 Z"
-    : "M 640 320 Q 960 235 1290 320 L 1490 470 L 1450 860 L 1300 900 L 1330 1690 Q 960 1745 585 1690 L 615 900 L 465 860 L 425 470 Z";
+    ? "M 640 315 Q 960 235 1290 315 L 1545 505 L 1495 895 L 1290 935 L 1345 1700 Q 960 1760 575 1700 L 630 935 L 425 895 L 375 505 Z"
+    : "M 640 305 Q 960 225 1290 305 L 1545 505 L 1495 895 L 1290 935 L 1345 1700 Q 960 1760 575 1700 L 630 935 L 425 895 L 375 505 Z";
 
-  const sleeveLeft = "M 640 330 L 425 470 L 465 860 L 615 900 L 655 560 Z";
-  const sleeveRight = "M 1290 330 L 1490 470 L 1450 860 L 1300 900 L 1265 560 Z";
+  const sleeveLeft = "M 640 315 L 375 505 L 425 895 L 630 935 L 668 560 Z";
+  const sleeveRight = "M 1290 315 L 1545 505 L 1495 895 L 1290 935 L 1252 560 Z";
 
   // Collar: V on the front, ribbed band on the back
   const collar = front
-    ? "M 800 285 Q 960 300 1120 285 L 1140 330 Q 960 520 785 330 Z"
-    : "M 800 265 Q 960 320 1125 265 L 1135 320 Q 960 375 790 320 Z";
+    ? "M 830 288 Q 960 305 1090 288 L 1108 338 Q 960 505 812 338 Z"
+    : "M 810 258 Q 960 318 1120 258 L 1132 318 Q 960 380 798 318 Z";
+
 
   return (
     <div className="relative mx-auto w-full">
@@ -81,8 +82,9 @@ export function SoccerMockup({
           <path d={sleeveRight} fill={sleeveColor} />
           <path d={collar} fill={trimColor} />
           {/* sleeve cuff trims */}
-          <path d="M 465 855 L 615 895 L 608 940 L 458 900 Z" fill={trimColor} opacity="0.9" />
-          <path d="M 1450 855 L 1300 895 L 1307 940 L 1457 900 Z" fill={trimColor} opacity="0.9" />
+          <path d="M 425 890 L 630 930 L 622 975 L 418 935 Z" fill={trimColor} opacity="0.9" />
+          <path d="M 1495 890 L 1290 930 L 1298 975 L 1502 935 Z" fill={trimColor} opacity="0.9" />
+
         </g>
 
         {/* Dynamic text overlays */}
