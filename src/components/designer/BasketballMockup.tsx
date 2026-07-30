@@ -53,8 +53,6 @@ export function BasketballMockup({
 
   // Tank-top silhouette (shoulders -> armhole -> side seam -> hem)
   const torso =
-    `M 174 122 L 210 96 L 252 92 ${neckline} L 294 0 ` // placeholder replaced below
-      .slice(0, 0) +
     `M 174 122 L 210 96 L 252 92 ${neckline} L 390 96 L 426 122 ` +
     `C 404 168 392 200 390 244 ` +
     `L 400 300 L 406 436 ` +
