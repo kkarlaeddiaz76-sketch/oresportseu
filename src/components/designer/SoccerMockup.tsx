@@ -45,18 +45,18 @@ export function SoccerMockup({
   const front = view === "front";
   const base = front ? futbolFront.url : futbolBack.url;
 
-  // Body silhouette (shoulders -> bottom hem), sleeves included
-  const body = front
-    ? "M 640 315 Q 960 235 1290 315 L 1545 505 L 1495 895 L 1290 935 L 1345 1700 Q 960 1760 575 1700 L 630 935 L 425 895 L 375 505 Z"
-    : "M 640 305 Q 960 225 1290 305 L 1545 505 L 1495 895 L 1290 935 L 1345 1700 Q 960 1760 575 1700 L 630 935 L 425 895 L 375 505 Z";
+  // Body silhouette traced from the official photo (shoulders -> bottom hem)
+  const body =
+    "M 700 302 Q 960 250 1216 302 L 1352 382 L 1455 500 L 1481 620 L 1511 800 L 1438 862 L 1292 900 L 1302 1400 L 1310 1645 Q 960 1706 610 1645 L 618 1400 L 628 900 L 482 862 L 409 800 L 439 620 L 465 500 L 568 382 Z";
 
-  const sleeveLeft = "M 640 315 L 375 505 L 425 895 L 630 935 L 668 560 Z";
-  const sleeveRight = "M 1290 315 L 1545 505 L 1495 895 L 1290 935 L 1252 560 Z";
+  const sleeveLeft = "M 700 302 L 568 382 L 465 500 L 439 620 L 409 800 L 482 862 L 628 900 L 662 555 Z";
+  const sleeveRight = "M 1216 302 L 1352 382 L 1455 500 L 1481 620 L 1511 800 L 1438 862 L 1292 900 L 1258 555 Z";
 
   // Collar: V on the front, ribbed band on the back
   const collar = front
-    ? "M 830 288 Q 960 305 1090 288 L 1108 338 Q 960 505 812 338 Z"
-    : "M 810 258 Q 960 318 1120 258 L 1132 318 Q 960 380 798 318 Z";
+    ? "M 812 274 Q 960 302 1108 274 L 1122 332 Q 960 500 798 332 Z"
+    : "M 806 262 Q 960 318 1116 262 L 1128 322 Q 960 380 794 322 Z";
+
 
 
   return (
