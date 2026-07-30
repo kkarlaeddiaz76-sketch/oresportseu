@@ -82,8 +82,8 @@ export function SoccerMockup({
           <path d={sleeveRight} fill={sleeveColor} />
           <path d={collar} fill={trimColor} />
           {/* sleeve cuff trims */}
-          <path d="M 425 890 L 630 930 L 622 975 L 418 935 Z" fill={trimColor} opacity="0.9" />
-          <path d="M 1495 890 L 1290 930 L 1298 975 L 1502 935 Z" fill={trimColor} opacity="0.9" />
+          <path d="M 415 806 L 482 862 L 628 900 L 632 852 L 492 814 Z" fill={trimColor} opacity="0.9" />
+          <path d="M 1505 806 L 1438 862 L 1292 900 L 1288 852 L 1428 814 Z" fill={trimColor} opacity="0.9" />
 
         </g>
 
