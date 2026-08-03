@@ -230,6 +230,7 @@ function DesignerPage() {
                   sport={sport}
                   cut={cut}
                   view={view}
+                  template={template}
                   jerseyColor={primary}
                   sleeveColor={sport === "basket" ? sleeveColor : secondary}
                   shortsColor={shortsColor}
