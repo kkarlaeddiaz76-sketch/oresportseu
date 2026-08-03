@@ -8,12 +8,12 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Upload, RotateCw, Trash2, Plus, Truck, Minus, ShoppingBag, MessageCircle } from "lucide-react";
 import {
-  JerseyCanvas, FONT_OPTIONS, FONT_CATEGORY_LABEL, TEMPLATES,
+  FONT_OPTIONS, FONT_CATEGORY_LABEL, TEMPLATES,
   type Sport, type NeckCut, type View, type Category, type FontCategory, type Template,
   useObjectUrl,
 } from "@/components/designer/JerseyCanvas";
-import { BasketballMockup } from "@/components/designer/BasketballMockup";
-import { SoccerMockup } from "@/components/designer/SoccerMockup";
+import { PhotoMockup } from "@/components/designer/PhotoMockup";
+
 
 
 import { SizeGuideButton } from "@/components/site/SizeGuide";
@@ -222,31 +222,17 @@ function DesignerPage() {
                 if (e.target === e.currentTarget) setLogoSelected(false);
               }}
             >
-              {sport === "basket" ? (
-                <BasketballMockup
+              <div
+                className="w-full transition-transform"
+                style={{ transform: `scale(${category === "kids" ? 0.84 : category === "women" ? 0.94 : 1})` }}
+              >
+                <PhotoMockup
+                  sport={sport}
+                  cut={cut}
                   view={view}
                   jerseyColor={primary}
+                  sleeveColor={sport === "basket" ? sleeveColor : secondary}
                   shortsColor={shortsColor}
-                  sleeveColor={sleeveColor}
-                  trimColor={accent}
-                  teamName={teamName}
-                  playerName={playerName}
-                  number={number}
-                  fontFront={fontFrontFamily}
-                  fontBack={fontBackFamily}
-                  teamNameSize={teamNameSize}
-                  playerNameSize={playerNameSize}
-                  numberSize={numberSize}
-                  teamNameColor={teamNameColor}
-                  playerNameColor={playerNameColor}
-                  numberColor={numberColor}
-                  showSleeves={showSleeves}
-                />
-              ) : sport === "futbol" && cut === "vneck" ? (
-                <SoccerMockup
-                  view={view}
-                  jerseyColor={primary}
-                  sleeveColor={secondary}
                   trimColor={accent}
                   teamName={teamName}
                   playerName={playerName}
@@ -260,23 +246,8 @@ function DesignerPage() {
                   playerNameColor={playerNameColor}
                   numberColor={numberColor}
                 />
-              ) : (
-                <JerseyCanvas
-                  sport={sport} view={view} cut={cut}
-                  primary={primary} secondary={secondary} accent={accent}
-                  teamName={teamName} playerName={playerName} number={number}
-                  fontFront={fontFrontFamily}
-                  fontBack={fontBackFamily}
-                  category={category}
-                  template={template}
-                  teamNameSize={teamNameSize}
-                  playerNameSize={playerNameSize}
-                  numberSize={numberSize}
-                  teamNameColor={teamNameColor}
-                  playerNameColor={playerNameColor}
-                  numberColor={numberColor}
-                />
-              )}
+              </div>
+
 
 
 
