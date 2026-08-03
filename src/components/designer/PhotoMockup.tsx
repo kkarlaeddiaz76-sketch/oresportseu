@@ -43,7 +43,7 @@ function Zone({
         inset: 0,
         backgroundColor: color,
         backgroundImage: background,
-        backgroundSize: background && background.startsWith("url") ? "22% 22%" : undefined,
+        backgroundSize: background && background.startsWith("url") ? "13% 13%" : undefined,
         backgroundRepeat: background && background.startsWith("url") ? "repeat" : undefined,
         opacity,
         clipPath: clip,
