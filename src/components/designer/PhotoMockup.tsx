@@ -99,7 +99,7 @@ function bodyFill(template: Template, primary: string, secondary: string, accent
 
 
 export function PhotoMockup({
-  sport, cut, view,
+  sport, cut, view, template = "solid",
   jerseyColor, sleeveColor, trimColor, shortsColor = "#000000",
   teamName, playerName, number,
   fontFront, fontBack,
@@ -109,31 +109,87 @@ export function PhotoMockup({
   const front = view === "front";
   const src = baseImage(sport, cut, view);
   const isSet = sport === "basket";
+  const body = bodyFill(template, jerseyColor, sleeveColor, trimColor);
+  const patterned = template === "gradient" || template === "camo" || template === "geometric";
+  const raglan = template === "raglan";
 
   return (
     <div className="relative mx-auto aspect-square w-full max-w-md select-none">
-      {/* 1. Flat color zones, masked by the garment silhouette */}
-      <Zone src={src} color={isSet ? jerseyColor : jerseyColor} />
+      {/* 1. Flat color / pattern zones, masked by the garment silhouette */}
+      <Zone src={src} color={body.color} background={body.background} />
 
       {isSet ? (
         <>
           <Zone src={src} color={shortsColor} clip="inset(51% 0 0 0)" />
           <Zone src={src} color={trimColor} clip="inset(46.5% 0 50.5% 0)" />
           <Zone src={src} color={trimColor} clip="inset(0 40% 92% 40% round 40%)" />
-          <Zone src={src} color={sleeveColor} clip="inset(5% 82% 56% 0)" />
-          <Zone src={src} color={sleeveColor} clip="inset(5% 0 56% 82%)" />
+          {!patterned && <Zone src={src} color={sleeveColor} clip="inset(5% 82% 56% 0)" />}
+          {!patterned && <Zone src={src} color={sleeveColor} clip="inset(5% 0 56% 82%)" />}
           <Zone src={src} color={trimColor} clip="inset(54% 88% 6% 0)" />
           <Zone src={src} color={trimColor} clip="inset(54% 0 6% 88%)" />
         </>
       ) : (
         <>
-          <Zone src={src} color={sleeveColor} clip="polygon(0% 4%, 31% 9%, 27% 47%, 0% 47%)" />
-          <Zone src={src} color={sleeveColor} clip="polygon(100% 4%, 69% 9%, 73% 47%, 100% 47%)" />
+          {raglan ? (
+            <>
+              <Zone src={src} color={sleeveColor} clip="polygon(0% 4%, 44% 6%, 30% 22%, 27% 47%, 0% 47%)" />
+              <Zone src={src} color={sleeveColor} clip="polygon(100% 4%, 56% 6%, 70% 22%, 73% 47%, 100% 47%)" />
+            </>
+          ) : !patterned ? (
+            <>
+              <Zone src={src} color={sleeveColor} clip="polygon(0% 4%, 31% 9%, 27% 47%, 0% 47%)" />
+              <Zone src={src} color={sleeveColor} clip="polygon(100% 4%, 69% 9%, 73% 47%, 100% 47%)" />
+            </>
+          ) : null}
           <Zone src={src} color={trimColor} clip="polygon(0% 41%, 28% 41%, 27% 47%, 0% 47%)" />
           <Zone src={src} color={trimColor} clip="polygon(100% 41%, 72% 41%, 73% 47%, 100% 47%)" />
           <Zone src={src} color={trimColor} clip="inset(1% 39% 89% 39% round 40%)" />
         </>
       )}
+
+      {/* 1b. Template graphics on top of the base colors */}
+      {template === "sidePanels" && !isSet && (
+        <>
+          <Zone src={src} color={sleeveColor} clip="polygon(25% 20%, 31% 20%, 33% 90%, 27% 90%)" />
+          <Zone src={src} color={sleeveColor} clip="polygon(75% 20%, 69% 20%, 67% 90%, 73% 90%)" />
+          <Zone src={src} color={trimColor} clip="polygon(31% 20%, 33% 20%, 35% 90%, 33% 90%)" />
+          <Zone src={src} color={trimColor} clip="polygon(69% 20%, 67% 20%, 65% 90%, 67% 90%)" />
+        </>
+      )}
+      {template === "sidePanels" && isSet && (
+        <>
+          <Zone src={src} color={trimColor} clip="polygon(29% 55%, 33% 55%, 33% 96%, 29% 96%)" />
+          <Zone src={src} color={trimColor} clip="polygon(71% 55%, 67% 55%, 67% 96%, 71% 96%)" />
+        </>
+      )}
+      {template === "piping" && (
+        <>
+          <Zone src={src} color={trimColor} clip="polygon(0% 6%, 34% 9%, 33% 12%, 0% 9%)" />
+          <Zone src={src} color={trimColor} clip="polygon(100% 6%, 66% 9%, 67% 12%, 100% 9%)" />
+          {!isSet && <Zone src={src} color={trimColor} clip="polygon(48.6% 14%, 51.4% 14%, 51.4% 92%, 48.6% 92%)" />}
+        </>
+      )}
+      {template === "doublePiping" && (
+        <>
+          <Zone src={src} color={trimColor} clip="inset(30% 0 68.5% 0)" />
+          <Zone src={src} color={trimColor} clip="inset(34% 0 64.5% 0)" />
+        </>
+      )}
+      {template === "ribCollar" && (
+        <>
+          <Zone src={src} color={trimColor} clip="inset(0 36% 95% 36% round 40%)" />
+          <Zone src={src} color={sleeveColor} clip="inset(4% 36% 91% 36% round 30%)" />
+          {!isSet && (
+            <>
+              <Zone src={src} color={trimColor} clip="polygon(0% 41%, 28% 41%, 28% 44%, 0% 44%)" />
+              <Zone src={src} color={sleeveColor} clip="polygon(0% 44%, 28% 44%, 27% 47%, 0% 47%)" />
+              <Zone src={src} color={trimColor} clip="polygon(100% 41%, 72% 41%, 72% 44%, 100% 44%)" />
+              <Zone src={src} color={sleeveColor} clip="polygon(100% 44%, 72% 44%, 73% 47%, 100% 47%)" />
+            </>
+          )}
+        </>
+      )}
+
 
       {/* 2. The real photo on top in multiply keeps folds, shadows and fabric texture */}
       <img
