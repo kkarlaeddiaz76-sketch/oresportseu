@@ -12,8 +12,8 @@ import {
   type Sport, type NeckCut, type View, type Category, type FontCategory, type Template,
   useObjectUrl,
 } from "@/components/designer/JerseyCanvas";
-import { BasketballMockup } from "@/components/designer/BasketballMockup";
-import { SoccerMockup } from "@/components/designer/SoccerMockup";
+import { PhotoMockup } from "@/components/designer/PhotoMockup";
+
 
 
 import { SizeGuideButton } from "@/components/site/SizeGuide";
