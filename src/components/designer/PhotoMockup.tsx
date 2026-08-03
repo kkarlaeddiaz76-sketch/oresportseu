@@ -32,7 +32,9 @@ export function baseImage(sport: Sport, cut: NeckCut, view: View) {
 }
 
 /** A color region clipped to a rectangle and masked by the garment silhouette. */
-function Zone({ src, color, clip, opacity = 1 }: { src: string; color: string; clip?: string; opacity?: number }) {
+function Zone({
+  src, color, background, clip, opacity = 1,
+}: { src: string; color?: string; background?: string; clip?: string; opacity?: number }) {
   return (
     <div
       aria-hidden
@@ -40,6 +42,9 @@ function Zone({ src, color, clip, opacity = 1 }: { src: string; color: string; c
         position: "absolute",
         inset: 0,
         backgroundColor: color,
+        backgroundImage: background,
+        backgroundSize: background && background.startsWith("url") ? "22% 22%" : undefined,
+        backgroundRepeat: background && background.startsWith("url") ? "repeat" : undefined,
         opacity,
         clipPath: clip,
         WebkitMaskImage: `url("${src}")`,
@@ -54,6 +59,44 @@ function Zone({ src, color, clip, opacity = 1 }: { src: string; color: string; c
     />
   );
 }
+
+const enc = (svg: string) => `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+
+function camoPattern(p: string, s: string, a: string) {
+  return enc(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">` +
+      `<rect width="80" height="80" fill="${p}"/>` +
+      `<path d="M0 20 Q20 5 40 20 T80 20 L80 40 Q60 55 40 40 T0 40 Z" fill="${s}" opacity="0.55"/>` +
+      `<path d="M10 55 Q30 45 55 60 T80 70 L80 80 L0 80 L0 65 Z" fill="${a}" opacity="0.35"/>` +
+      `<ellipse cx="60" cy="15" rx="12" ry="7" fill="${a}" opacity="0.28"/>` +
+      `<ellipse cx="20" cy="65" rx="10" ry="6" fill="${s}" opacity="0.5"/>` +
+      `</svg>`,
+  );
+}
+
+function scalesPattern(p: string, s: string) {
+  return enc(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="32" viewBox="0 0 36 32">` +
+      `<rect width="36" height="32" fill="${p}"/>` +
+      `<path d="M18 0 A18 16 0 0 1 36 16 A18 16 0 0 1 18 32 A18 16 0 0 1 0 16 A18 16 0 0 1 18 0" fill="none" stroke="${s}" stroke-width="2" opacity="0.6"/>` +
+      `</svg>`,
+  );
+}
+
+/** Body fill (color or pattern) for the selected base template. */
+function bodyFill(template: Template, primary: string, secondary: string, accent: string) {
+  switch (template) {
+    case "gradient":
+      return { background: `linear-gradient(180deg, ${primary} 0%, ${secondary} 100%)` };
+    case "camo":
+      return { background: camoPattern(primary, secondary, accent) };
+    case "geometric":
+      return { background: scalesPattern(primary, secondary) };
+    default:
+      return { color: primary };
+  }
+}
+
 
 export function PhotoMockup({
   sport, cut, view,
