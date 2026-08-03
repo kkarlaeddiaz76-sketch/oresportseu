@@ -8,7 +8,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Upload, RotateCw, Trash2, Plus, Truck, Minus, ShoppingBag, MessageCircle } from "lucide-react";
 import {
-  JerseyCanvas, FONT_OPTIONS, FONT_CATEGORY_LABEL, TEMPLATES,
+  FONT_OPTIONS, FONT_CATEGORY_LABEL, TEMPLATES,
   type Sport, type NeckCut, type View, type Category, type FontCategory, type Template,
   useObjectUrl,
 } from "@/components/designer/JerseyCanvas";
