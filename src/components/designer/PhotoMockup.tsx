@@ -1,9 +1,10 @@
-import type { NeckCut, Sport, View } from "./JerseyCanvas";
+import type { NeckCut, Sport, Template, View } from "./JerseyCanvas";
 
 interface Props {
   sport: Sport;
   cut: NeckCut;
   view: View;
+  template?: Template;
   jerseyColor: string;
   sleeveColor: string;
   trimColor: string;
