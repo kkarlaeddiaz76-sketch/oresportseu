@@ -188,9 +188,10 @@ function DesignerPage() {
           <SizeGuideButton />
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[1fr_420px] lg:items-start">
-          {/* PREVIEW — sticky on desktop, sticky-top on mobile */}
-          <div className="sticky top-16 z-20 self-start rounded-2xl border-2 border-black bg-white p-4 md:p-6 lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
+        <div className="grid gap-8 lg:grid-cols-[440px_1fr] lg:items-start">
+          {/* PREVIEW — sticky on desktop, second column */}
+          <div className="sticky top-16 z-20 self-start rounded-2xl border-2 border-black bg-white p-4 md:p-6 lg:top-24 lg:order-2 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
+
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <div className="flex gap-1 rounded-full border border-black p-1">
                 <button
