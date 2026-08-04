@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Upload, RotateCw, Trash2, Plus, Truck, Minus, ShoppingBag, MessageCircle } from "lucide-react";
+import { Upload, RotateCw, Trash2, Plus, Truck, Minus, ShoppingBag, MessageCircle, Eye } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   FONT_OPTIONS, FONT_CATEGORY_LABEL, TEMPLATES,
   type Sport, type NeckCut, type View, type Category, type FontCategory, type Template,
@@ -87,6 +88,7 @@ function DesignerPage() {
   const [playerNameColor, setPlayerNameColor] = useState("#FFFFFF");
   const [numberColor, setNumberColor] = useState("#FFFFFF");
   const [showSummary, setShowSummary] = useState(false);
+  const [showFullPreview, setShowFullPreview] = useState(false);
   const { url: logoUrl, set: setLogo } = useObjectUrl();
 
 
@@ -188,9 +190,10 @@ function DesignerPage() {
           <SizeGuideButton />
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[1fr_420px] lg:items-start">
-          {/* PREVIEW — sticky on desktop, sticky-top on mobile */}
-          <div className="sticky top-16 z-20 self-start rounded-2xl border-2 border-black bg-white p-4 md:p-6 lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
+        <div className="grid gap-8 lg:grid-cols-[440px_1fr] lg:items-start">
+          {/* PREVIEW — sticky on desktop, second column */}
+          <div className="sticky top-16 z-20 self-start rounded-2xl border-2 border-black bg-white p-4 md:p-6 lg:top-24 lg:order-2 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
+
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <div className="flex gap-1 rounded-full border border-black p-1">
                 <button
@@ -312,204 +315,246 @@ function DesignerPage() {
           </div>
 
           {/* CONTROLS */}
-          <div className="space-y-6">
-            {/* Category */}
-            <Panel title="Categoría / Corte">
-              <div className="grid grid-cols-3 gap-2">
-                {CATEGORIES.map((c) => (
-                  <button
-                    key={c.v}
-                    onClick={() => setCategory(c.v)}
-                    className={`rounded-lg border-2 p-2 text-xs font-bold uppercase transition ${
-                      category === c.v ? "border-primary bg-primary text-white" : "border-black/20 bg-white text-black hover:border-black"
-                    }`}
-                  >
-                    {c.label}
-                  </button>
-                ))}
-              </div>
-            </Panel>
+          <div className="lg:order-1">
+            <Button
+              variant="outline"
+              onClick={() => setShowFullPreview(true)}
+              className="mb-4 w-full gap-2 border-black text-black hover:bg-black hover:text-white"
+            >
+              <Eye className="h-4 w-4" /> Vista previa completa (Frente y Espalda)
+            </Button>
 
-            {/* Sport */}
-            <Panel title="Deporte">
-              <div className="grid grid-cols-3 gap-2">
-                {SPORTS.map((s) => (
-                  <button
-                    key={s.v}
-                    onClick={() => { setSport(s.v); if (!cutsAllowed.includes(cut)) setCut("crew"); }}
-                    className={`rounded-lg border-2 p-2 text-xs font-bold uppercase transition ${
-                      sport === s.v ? "border-primary bg-primary text-white" : "border-black/20 bg-white text-black hover:border-black"
-                    }`}
-                  >
-                    {s.label}
-                  </button>
-                ))}
-              </div>
-            </Panel>
+            <Tabs defaultValue="step1" className="w-full">
+              <TabsList className="grid w-full grid-cols-4 rounded-xl border-2 border-black bg-white p-1">
+                <TabsTrigger value="step1" className="rounded-lg text-[11px] font-black uppercase data-[state=active]:bg-primary data-[state=active]:text-white">1. Deporte</TabsTrigger>
+                <TabsTrigger value="step2" className="rounded-lg text-[11px] font-black uppercase data-[state=active]:bg-primary data-[state=active]:text-white">2. Diseño</TabsTrigger>
+                <TabsTrigger value="step3" className="rounded-lg text-[11px] font-black uppercase data-[state=active]:bg-primary data-[state=active]:text-white">3. Cuello</TabsTrigger>
+                <TabsTrigger value="step4" className="rounded-lg text-[11px] font-black uppercase data-[state=active]:bg-primary data-[state=active]:text-white">4. Textos</TabsTrigger>
+              </TabsList>
 
-            {/* Cut */}
-            <Panel title="Corte / Cuello">
-              <div className="grid grid-cols-2 gap-2">
-                {(["crew", "vneck", "btn2", "btn6"] as NeckCut[]).map((c) => {
-                  const disabled = !cutsAllowed.includes(c);
-                  const label = { crew: "Cuello Redondo", vneck: "Cuello en V", btn2: "2 Botones", btn6: "6 Botones (Full)" }[c];
-                  return (
-                    <button
-                      key={c}
-                      disabled={disabled}
-                      onClick={() => setCut(c)}
-                      className={`rounded-lg border-2 p-2 text-xs font-bold uppercase transition ${
-                        cut === c ? "border-primary bg-primary text-white" : "border-black/20 bg-white text-black hover:border-black"
-                      } ${disabled ? "cursor-not-allowed opacity-30" : ""}`}
-                    >
-                      {label}
-                    </button>
-                  );
-                })}
-              </div>
-              {!["beisbol", "softball", "kickingball"].includes(sport) && (
-                <p className="mt-2 text-xs text-black/60">Los cortes con botones aplican a Béisbol, Softball y Kickingball.</p>
-              )}
-            </Panel>
+              {/* STEP 1 — Deporte y corte */}
+              <TabsContent value="step1" className="mt-4 space-y-6">
+                <Panel title="Categoría">
+                  <div className="grid grid-cols-3 gap-2">
+                    {CATEGORIES.map((c) => (
+                      <button
+                        key={c.v}
+                        onClick={() => setCategory(c.v)}
+                        className={`rounded-lg border-2 p-2 text-xs font-bold uppercase transition ${
+                          category === c.v ? "border-primary bg-primary text-white" : "border-black/20 bg-white text-black hover:border-black"
+                        }`}
+                      >
+                        {c.label}
+                      </button>
+                    ))}
+                  </div>
+                </Panel>
 
-            {/* Templates */}
-            <Panel title="Diseño Base / Plantilla">
-              <div className="grid grid-cols-3 gap-2">
-                {TEMPLATES.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => setTemplate(t.id)}
-                    title={t.desc}
-                    className={`group flex flex-col items-center gap-1 rounded-lg border-2 p-1.5 text-[10px] font-bold uppercase transition ${
-                      template === t.id ? "border-primary bg-primary/5 text-primary" : "border-black/15 bg-white text-black hover:border-black"
-                    }`}
-                  >
-                    <TemplateThumb template={t.id} primary={primary} secondary={secondary} accent={accent} />
-                    <span className="truncate leading-tight">{t.label}</span>
-                  </button>
-                ))}
-              </div>
-              <p className="mt-2 text-[11px] text-black/60">
-                Los colores Principal / Mangas / Acento siguen siendo editables sobre cualquier plantilla.
-              </p>
-            </Panel>
+                <Panel title="Deporte">
+                  <div className="grid grid-cols-3 gap-2">
+                    {SPORTS.map((s) => (
+                      <button
+                        key={s.v}
+                        onClick={() => { setSport(s.v); if (!cutsAllowed.includes(cut)) setCut("crew"); }}
+                        className={`rounded-lg border-2 p-2 text-xs font-bold uppercase transition ${
+                          sport === s.v ? "border-primary bg-primary text-white" : "border-black/20 bg-white text-black hover:border-black"
+                        }`}
+                      >
+                        {s.label}
+                      </button>
+                    ))}
+                  </div>
+                </Panel>
 
-            {/* Colors */}
-            <Panel title="Colores">
-              {sport === "basket" ? (
-                <>
+                <Panel title="Corte / Cuello">
+                  <div className="grid grid-cols-2 gap-2">
+                    {(["crew", "vneck", "btn2", "btn6"] as NeckCut[]).map((c) => {
+                      const disabled = !cutsAllowed.includes(c);
+                      const label = { crew: "Cuello Redondo", vneck: "Cuello en V", btn2: "2 Botones", btn6: "6 Botones (Full)" }[c];
+                      return (
+                        <button
+                          key={c}
+                          disabled={disabled}
+                          onClick={() => setCut(c)}
+                          className={`rounded-lg border-2 p-2 text-xs font-bold uppercase transition ${
+                            cut === c ? "border-primary bg-primary text-white" : "border-black/20 bg-white text-black hover:border-black"
+                          } ${disabled ? "cursor-not-allowed opacity-30" : ""}`}
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {!["beisbol", "softball", "kickingball"].includes(sport) && (
+                    <p className="mt-2 text-xs text-black/60">Los cortes con botones aplican a Béisbol, Softball y Kickingball.</p>
+                  )}
+                </Panel>
+              </TabsContent>
+
+              {/* STEP 2 — Diseño base y colores */}
+              <TabsContent value="step2" className="mt-4 space-y-6">
+                <Panel title="Diseño Base / Plantilla">
                   <div className="grid grid-cols-2 gap-3">
-                    <ColorField label="Camiseta" value={primary} onChange={setPrimary} />
-                    <ColorField label="Short" value={shortsColor} onChange={setShortsColor} />
-                    <ColorField label="Bordes / Cuello" value={accent} onChange={setAccent} />
-                    <ColorField label="Codera / Manga" value={sleeveColor} onChange={setSleeveColor} />
+                    {TEMPLATES.map((t) => (
+                      <button
+                        key={t.id}
+                        onClick={() => setTemplate(t.id)}
+                        title={t.desc}
+                        className={`group flex flex-col items-center gap-1 rounded-lg border-2 p-2 text-[11px] font-bold uppercase transition ${
+                          template === t.id ? "border-primary bg-primary/5 text-primary" : "border-black/15 bg-white text-black hover:border-black"
+                        }`}
+                      >
+                        <TemplateThumb template={t.id} primary={primary} secondary={secondary} accent={accent} />
+                        <span className="truncate leading-tight">{t.label}</span>
+                      </button>
+                    ))}
                   </div>
-                  <label className="mt-3 flex cursor-pointer items-center gap-2 text-xs font-semibold text-black">
-                    <input
-                      type="checkbox"
-                      checked={showSleeves}
-                      onChange={(e) => setShowSleeves(e.target.checked)}
-                      className="h-4 w-4 accent-primary"
+                  <p className="mt-2 text-[11px] text-black/60">
+                    Los colores siguen siendo editables sobre cualquier plantilla.
+                  </p>
+                </Panel>
+
+                <Panel title="Colores">
+                  {sport === "basket" ? (
+                    <>
+                      <div className="grid grid-cols-2 gap-3">
+                        <ColorField label="Camiseta" value={primary} onChange={setPrimary} />
+                        <ColorField label="Short" value={shortsColor} onChange={setShortsColor} />
+                        <ColorField label="Codera / Manga" value={sleeveColor} onChange={setSleeveColor} />
+                      </div>
+                      <label className="mt-3 flex cursor-pointer items-center gap-2 text-xs font-semibold text-black">
+                        <input
+                          type="checkbox"
+                          checked={showSleeves}
+                          onChange={(e) => setShowSleeves(e.target.checked)}
+                          className="h-4 w-4 accent-primary"
+                        />
+                        Añadir coderas / mangas de compresión
+                      </label>
+                    </>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      <ColorField label="Principal" value={primary} onChange={setPrimary} />
+                      <ColorField label="Mangas" value={secondary} onChange={setSecondary} />
+                    </div>
+                  )}
+                </Panel>
+
+                <Panel title="Tela">
+                  <div className="grid grid-cols-2 gap-2">
+                    <FabricOption
+                      active={fabric === "standard"}
+                      title="Estándar"
+                      desc="Microperforado 170g"
+                      tip="Tejido microperforado transpirable de 170g. Ideal para uso frecuente."
+                      onClick={() => setFabric("standard")}
                     />
-                    Añadir coderas / mangas de compresión
-                  </label>
-                </>
-              ) : (
-                <div className="grid grid-cols-3 gap-3">
-                  <ColorField label="Principal" value={primary} onChange={setPrimary} />
-                  <ColorField label="Mangas" value={secondary} onChange={setSecondary} />
-                  <ColorField label="Acento" value={accent} onChange={setAccent} />
-                </div>
-              )}
-            </Panel>
-
-            {/* Fonts */}
-            <Panel title="Tipografías">
-              <div className="space-y-3">
-                <FontPicker
-                  label="Nombre del Equipo (Frente)"
-                  value={fontFront}
-                  onChange={setFontFront}
-                  sample={teamName || "EQUIPO"}
-                />
-                <FontPicker
-                  label="Jugador & Número (Espalda)"
-                  value={fontBack}
-                  onChange={setFontBack}
-                  sample={`${playerName || "JUGADOR"} 23`}
-                />
-              </div>
-            </Panel>
-
-            {/* Text */}
-            <Panel title={view === "front" ? "Frente: Nombre del Equipo & Logo" : "Espalda: Jugador & Número"}>
-              {view === "front" ? (
-                <div className="space-y-3">
-                  <div>
-                    <Label>Nombre del Equipo</Label>
-                    <Input value={teamName} onChange={(e) => setTeamName(e.target.value)} maxLength={14} />
+                    <FabricOption
+                      active={fabric === "premium"}
+                      title="Premium"
+                      desc="Liso 280g"
+                      tip="Tejido liso de alta resistencia de 280g. Acabado profesional."
+                      onClick={() => setFabric("premium")}
+                    />
                   </div>
-                  <SizeSlider label="Tamaño del texto" value={teamNameSize} onChange={setTeamNameSize} min={20} max={80} />
-                  <TextColorPicker label="Color del texto" value={teamNameColor} onChange={setTeamNameColor} />
-                  <div>
-                    <Label>Logo del Equipo (PNG/JPG)</Label>
-                    <label className="mt-1 flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-black/30 p-4 text-sm font-semibold text-black hover:border-primary hover:text-primary">
-                      <Upload className="h-4 w-4" />
-                      {logoUrl ? "Cambiar logo" : "Subir logo"}
-                      <input
-                        type="file"
-                        accept="image/png,image/jpeg"
-                        className="hidden"
-                        onChange={(e) => setLogo(e.target.files?.[0] ?? null)}
+                </Panel>
+              </TabsContent>
+
+              {/* STEP 3 — Cuello y costuras */}
+              <TabsContent value="step3" className="mt-4 space-y-6">
+                <Panel title="Cuello y Costuras">
+                  <ColorField label="Color del cuello y ribetes" value={accent} onChange={setAccent} />
+                  <p className="mt-2 text-[11px] text-black/60">
+                    El color se aplica exactamente sobre el cuello real de la prenda, conservando sus sombras y pliegues.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {TEXT_COLORS.map((t) => (
+                      <button
+                        key={t.c}
+                        type="button"
+                        title={t.n}
+                        onClick={() => setAccent(t.c)}
+                        className={`h-7 w-7 rounded-full border-2 transition ${accent.toUpperCase() === t.c.toUpperCase() ? "border-primary ring-2 ring-primary/40 scale-110" : "border-black/30 hover:border-black"}`}
+                        style={{ background: t.c }}
                       />
-                    </label>
-                    {logoUrl && (
-                      <p className="mt-2 text-xs text-black/60">
-                        Arrastra el logo sobre la camisa para reposicionarlo. Toca el logo para escalar o eliminar.
-                      </p>
-                    )}
+                    ))}
                   </div>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <div className="grid grid-cols-[1fr_120px] gap-3">
-                    <div>
-                      <Label>Nombre Jugador</Label>
-                      <Input value={playerName} onChange={(e) => setPlayerName(e.target.value)} maxLength={14} />
-                    </div>
-                    <div>
-                      <Label>Número</Label>
-                      <Input value={number} onChange={(e) => setNumber(e.target.value.replace(/\D/g, "").slice(0, 2))} inputMode="numeric" />
-                    </div>
-                  </div>
-                  <SizeSlider label="Tamaño del nombre" value={playerNameSize} onChange={setPlayerNameSize} min={16} max={60} />
-                  <TextColorPicker label="Color del nombre" value={playerNameColor} onChange={setPlayerNameColor} />
-                  <SizeSlider label="Tamaño del número" value={numberSize} onChange={setNumberSize} min={100} max={260} />
-                  <TextColorPicker label="Color del número" value={numberColor} onChange={setNumberColor} />
-                </div>
-              )}
-            </Panel>
+                </Panel>
+              </TabsContent>
 
-            {/* Fabric */}
-            <Panel title="Tela">
-              <div className="grid grid-cols-2 gap-2">
-                <FabricOption
-                  active={fabric === "standard"}
-                  title="Estándar"
-                  desc="Microperforado 170g"
-                  tip="Tejido microperforado transpirable de 170g. Ideal para uso frecuente."
-                  onClick={() => setFabric("standard")}
-                />
-                <FabricOption
-                  active={fabric === "premium"}
-                  title="Premium"
-                  desc="Liso 280g"
-                  tip="Tejido liso de alta resistencia de 280g. Acabado profesional."
-                  onClick={() => setFabric("premium")}
-                />
-              </div>
-            </Panel>
+              {/* STEP 4 — Personalización / textos */}
+              <TabsContent value="step4" className="mt-4 space-y-6">
+                <Panel title="Tipografías">
+                  <div className="space-y-3">
+                    <FontPicker
+                      label="Nombre del Equipo (Frente)"
+                      value={fontFront}
+                      onChange={setFontFront}
+                      sample={teamName || "EQUIPO"}
+                    />
+                    <FontPicker
+                      label="Jugador & Número (Espalda)"
+                      value={fontBack}
+                      onChange={setFontBack}
+                      sample={`${playerName || "JUGADOR"} 23`}
+                    />
+                  </div>
+                </Panel>
+
+                <Panel title={view === "front" ? "Frente: Nombre del Equipo & Logo" : "Espalda: Jugador & Número"}>
+                  {view === "front" ? (
+                    <div className="space-y-3">
+                      <div>
+                        <Label>Nombre del Equipo</Label>
+                        <Input value={teamName} onChange={(e) => setTeamName(e.target.value)} maxLength={14} />
+                      </div>
+                      <SizeSlider label="Tamaño del texto" value={teamNameSize} onChange={setTeamNameSize} min={20} max={80} />
+                      <TextColorPicker label="Color del texto" value={teamNameColor} onChange={setTeamNameColor} />
+                      <div>
+                        <Label>Logo del Equipo (PNG/JPG)</Label>
+                        <label className="mt-1 flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-black/30 p-4 text-sm font-semibold text-black hover:border-primary hover:text-primary">
+                          <Upload className="h-4 w-4" />
+                          {logoUrl ? "Cambiar logo" : "Subir logo"}
+                          <input
+                            type="file"
+                            accept="image/png,image/jpeg"
+                            className="hidden"
+                            onChange={(e) => setLogo(e.target.files?.[0] ?? null)}
+                          />
+                        </label>
+                        {logoUrl && (
+                          <p className="mt-2 text-xs text-black/60">
+                            Arrastra el logo sobre la camisa para reposicionarlo. Toca el logo para escalar o eliminar.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-[1fr_120px] gap-3">
+                        <div>
+                          <Label>Nombre Jugador</Label>
+                          <Input value={playerName} onChange={(e) => setPlayerName(e.target.value)} maxLength={14} />
+                        </div>
+                        <div>
+                          <Label>Número</Label>
+                          <Input value={number} onChange={(e) => setNumber(e.target.value.replace(/\D/g, "").slice(0, 2))} inputMode="numeric" />
+                        </div>
+                      </div>
+                      <SizeSlider label="Tamaño del nombre" value={playerNameSize} onChange={setPlayerNameSize} min={16} max={60} />
+                      <TextColorPicker label="Color del nombre" value={playerNameColor} onChange={setPlayerNameColor} />
+                      <SizeSlider label="Tamaño del número" value={numberSize} onChange={setNumberSize} min={100} max={260} />
+                      <TextColorPicker label="Color del número" value={numberColor} onChange={setNumberColor} />
+                    </div>
+                  )}
+                  <p className="mt-3 text-[11px] text-black/60">
+                    Cambia entre Frente y Espalda en la vista previa para editar cada lado.
+                  </p>
+                </Panel>
+              </TabsContent>
+            </Tabs>
           </div>
+
         </div>
 
         {/* ROSTER */}
@@ -623,6 +668,44 @@ function DesignerPage() {
             </aside>
           </div>
         </section>
+
+        <Dialog open={showFullPreview} onOpenChange={setShowFullPreview}>
+          <DialogContent className="max-w-5xl">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-black uppercase">Vista previa completa</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-6 sm:grid-cols-2">
+              {(["front", "back"] as View[]).map((v) => (
+                <div key={v} className="rounded-xl border-2 border-black bg-white p-3">
+                  <p className="mb-2 text-center text-xs font-black uppercase tracking-widest text-black">
+                    {v === "front" ? "Frente" : "Espalda"}
+                  </p>
+                  <PhotoMockup
+                    sport={sport}
+                    cut={cut}
+                    view={v}
+                    template={template}
+                    jerseyColor={primary}
+                    sleeveColor={sport === "basket" ? sleeveColor : secondary}
+                    shortsColor={shortsColor}
+                    trimColor={accent}
+                    teamName={teamName}
+                    playerName={playerName}
+                    number={number}
+                    fontFront={fontFrontFamily}
+                    fontBack={fontBackFamily}
+                    teamNameSize={teamNameSize}
+                    playerNameSize={playerNameSize}
+                    numberSize={numberSize}
+                    teamNameColor={teamNameColor}
+                    playerNameColor={playerNameColor}
+                    numberColor={numberColor}
+                  />
+                </div>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <PurchaseSummaryDialog
           open={showSummary}

@@ -52,15 +52,9 @@ export type Template =
 
 export const TEMPLATES: { id: Template; label: string; desc: string }[] = [
   { id: "solid", label: "Sólido", desc: "Base limpia sin patrón" },
-  { id: "gradient", label: "Degradado", desc: "Ombré vertical Principal → Mangas" },
-  { id: "piping", label: "Piping Clásico", desc: "Ribete fino en cuello, botonera y mangas" },
-  { id: "doublePiping", label: "Doble Ribete", desc: "Dos líneas paralelas en la pechera" },
-  { id: "raglan", label: "Raglan / Mangas Contraste", desc: "Corte diagonal desde el cuello" },
-  { id: "sidePanels", label: "Paneles Laterales", desc: "Franjas verticales de contraste" },
-  { id: "ribCollar", label: "Rib Tricolor", desc: "Franjas retro en cuello y puños" },
-  { id: "camo", label: "Camuflaje", desc: "Sublimado camo deportivo" },
-  { id: "geometric", label: "Escamas", desc: "Textura geométrica sutil" },
+  { id: "gradient", label: "Degradado", desc: "Ombré vertical Principal → Secundario" },
 ];
+
 
 interface Props {
   sport: Sport;
