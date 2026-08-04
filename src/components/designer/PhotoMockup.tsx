@@ -156,48 +156,6 @@ export function PhotoMockup({
       <Zone src={collarSrc} color={trimColor} />
 
 
-      {/* 1b. Template graphics on top of the base colors */}
-      {template === "sidePanels" && !isSet && (
-        <>
-          <Zone src={src} color={sleeveColor} clip="polygon(25% 20%, 31% 20%, 33% 90%, 27% 90%)" />
-          <Zone src={src} color={sleeveColor} clip="polygon(75% 20%, 69% 20%, 67% 90%, 73% 90%)" />
-          <Zone src={src} color={trimColor} clip="polygon(31% 20%, 33% 20%, 35% 90%, 33% 90%)" />
-          <Zone src={src} color={trimColor} clip="polygon(69% 20%, 67% 20%, 65% 90%, 67% 90%)" />
-        </>
-      )}
-      {template === "sidePanels" && isSet && (
-        <>
-          <Zone src={src} color={trimColor} clip="polygon(29% 55%, 33% 55%, 33% 96%, 29% 96%)" />
-          <Zone src={src} color={trimColor} clip="polygon(71% 55%, 67% 55%, 67% 96%, 71% 96%)" />
-        </>
-      )}
-      {template === "piping" && (
-        <>
-          <Zone src={src} color={trimColor} clip="polygon(0% 6%, 34% 9%, 33% 12%, 0% 9%)" />
-          <Zone src={src} color={trimColor} clip="polygon(100% 6%, 66% 9%, 67% 12%, 100% 9%)" />
-          {!isSet && <Zone src={src} color={trimColor} clip="polygon(48.6% 14%, 51.4% 14%, 51.4% 92%, 48.6% 92%)" />}
-        </>
-      )}
-      {template === "doublePiping" && (
-        <>
-          <Zone src={src} color={trimColor} clip="inset(30% 0 68.5% 0)" />
-          <Zone src={src} color={trimColor} clip="inset(34% 0 64.5% 0)" />
-        </>
-      )}
-      {template === "ribCollar" && (
-        <>
-          <Zone src={src} color={trimColor} clip="inset(0 36% 95% 36% round 40%)" />
-          <Zone src={src} color={sleeveColor} clip="inset(4% 36% 91% 36% round 30%)" />
-          {!isSet && (
-            <>
-              <Zone src={src} color={trimColor} clip="polygon(0% 41%, 28% 41%, 28% 44%, 0% 44%)" />
-              <Zone src={src} color={sleeveColor} clip="polygon(0% 44%, 28% 44%, 27% 47%, 0% 47%)" />
-              <Zone src={src} color={trimColor} clip="polygon(100% 41%, 72% 41%, 72% 44%, 100% 44%)" />
-              <Zone src={src} color={sleeveColor} clip="polygon(100% 44%, 72% 44%, 73% 47%, 100% 47%)" />
-            </>
-          )}
-        </>
-      )}
 
 
       {/* 2. The real photo on top in multiply keeps folds, shadows and fabric texture */}
