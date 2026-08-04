@@ -114,6 +114,7 @@ export function PhotoMockup({
 }: Props) {
   const front = view === "front";
   const src = baseImage(sport, cut, view);
+  const collarSrc = collarImage(sport, cut, view);
   const isSet = sport === "basket";
   const body = bodyFill(template, jerseyColor, sleeveColor, trimColor);
   const patterned = template === "gradient" || template === "camo" || template === "geometric";
@@ -128,7 +129,6 @@ export function PhotoMockup({
         <>
           <Zone src={src} color={shortsColor} clip="inset(51% 0 0 0)" />
           <Zone src={src} color={trimColor} clip="inset(46.5% 0 50.5% 0)" />
-          <Zone src={src} color={trimColor} clip="inset(0 40% 92% 40% round 40%)" />
           {!patterned && <Zone src={src} color={sleeveColor} clip="inset(5% 82% 56% 0)" />}
           {!patterned && <Zone src={src} color={sleeveColor} clip="inset(5% 0 56% 82%)" />}
           <Zone src={src} color={trimColor} clip="inset(54% 88% 6% 0)" />
@@ -149,9 +149,12 @@ export function PhotoMockup({
           ) : null}
           <Zone src={src} color={trimColor} clip="polygon(0% 41%, 28% 41%, 27% 47%, 0% 47%)" />
           <Zone src={src} color={trimColor} clip="polygon(100% 41%, 72% 41%, 73% 47%, 100% 47%)" />
-          <Zone src={src} color={trimColor} clip="inset(1% 39% 89% 39% round 40%)" />
         </>
       )}
+
+      {/* 1a. Collar: exact mask traced from the real photo, keeps its own shadows */}
+      <Zone src={collarSrc} color={trimColor} />
+
 
       {/* 1b. Template graphics on top of the base colors */}
       {template === "sidePanels" && !isSet && (
