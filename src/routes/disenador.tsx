@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Upload, RotateCw, Trash2, Plus, Truck, Minus, ShoppingBag, MessageCircle } from "lucide-react";
+import { Upload, RotateCw, Trash2, Plus, Truck, Minus, ShoppingBag, MessageCircle, Eye } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   FONT_OPTIONS, FONT_CATEGORY_LABEL, TEMPLATES,
   type Sport, type NeckCut, type View, type Category, type FontCategory, type Template,
@@ -87,6 +88,7 @@ function DesignerPage() {
   const [playerNameColor, setPlayerNameColor] = useState("#FFFFFF");
   const [numberColor, setNumberColor] = useState("#FFFFFF");
   const [showSummary, setShowSummary] = useState(false);
+  const [showFullPreview, setShowFullPreview] = useState(false);
   const { url: logoUrl, set: setLogo } = useObjectUrl();
 
 
@@ -666,6 +668,44 @@ function DesignerPage() {
             </aside>
           </div>
         </section>
+
+        <Dialog open={showFullPreview} onOpenChange={setShowFullPreview}>
+          <DialogContent className="max-w-5xl">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-black uppercase">Vista previa completa</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-6 sm:grid-cols-2">
+              {(["front", "back"] as View[]).map((v) => (
+                <div key={v} className="rounded-xl border-2 border-black bg-white p-3">
+                  <p className="mb-2 text-center text-xs font-black uppercase tracking-widest text-black">
+                    {v === "front" ? "Frente" : "Espalda"}
+                  </p>
+                  <PhotoMockup
+                    sport={sport}
+                    cut={cut}
+                    view={v}
+                    template={template}
+                    jerseyColor={primary}
+                    sleeveColor={sport === "basket" ? sleeveColor : secondary}
+                    shortsColor={shortsColor}
+                    trimColor={accent}
+                    teamName={teamName}
+                    playerName={playerName}
+                    number={number}
+                    fontFront={fontFrontFamily}
+                    fontBack={fontBackFamily}
+                    teamNameSize={teamNameSize}
+                    playerNameSize={playerNameSize}
+                    numberSize={numberSize}
+                    teamNameColor={teamNameColor}
+                    playerNameColor={playerNameColor}
+                    numberColor={numberColor}
+                  />
+                </div>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <PurchaseSummaryDialog
           open={showSummary}
