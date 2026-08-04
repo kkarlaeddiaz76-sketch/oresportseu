@@ -31,6 +31,12 @@ export function baseImage(sport: Sport, cut: NeckCut, view: View) {
   return `/uniformes/camisa-2botones-${side}.png`;
 }
 
+/** Precise collar mask (alpha PNG) generated from each base photo. */
+export function collarImage(sport: Sport, cut: NeckCut, view: View) {
+  return baseImage(sport, cut, view).replace(/\.png$/, "-cuello.png");
+}
+
+
 /** A color region clipped to a rectangle and masked by the garment silhouette. */
 function Zone({
   src, color, background, clip, opacity = 1,
