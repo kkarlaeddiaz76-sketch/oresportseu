@@ -7,6 +7,7 @@ interface Props {
   template?: Template;
   jerseyColor: string;
   sleeveColor: string;
+  bodySecondary?: string;
   trimColor: string;
   collarColor?: string;
   shortsColor?: string;
@@ -108,6 +109,7 @@ function bodyFill(template: Template, primary: string, secondary: string, accent
 export function PhotoMockup({
   sport, cut, view, template = "solid",
   jerseyColor, sleeveColor, trimColor, collarColor, shortsColor = "#000000",
+  bodySecondary,
   teamName, playerName, number,
   fontFront, fontBack,
   teamNameSize, playerNameSize, numberSize,
@@ -117,7 +119,7 @@ export function PhotoMockup({
   const src = baseImage(sport, cut, view);
   const collarSrc = collarImage(sport, cut, view);
   const isSet = sport === "basket";
-  const body = bodyFill(template, jerseyColor, sleeveColor, trimColor);
+  const body = bodyFill(template, jerseyColor, bodySecondary ?? sleeveColor, trimColor);
   const patterned = template === "gradient" || template === "camo" || template === "geometric";
   const raglan = template === "raglan";
 
@@ -142,14 +144,13 @@ export function PhotoMockup({
               <Zone src={src} color={sleeveColor} clip="polygon(0% 4%, 44% 6%, 30% 22%, 27% 47%, 0% 47%)" />
               <Zone src={src} color={sleeveColor} clip="polygon(100% 4%, 56% 6%, 70% 22%, 73% 47%, 100% 47%)" />
             </>
-          ) : !patterned ? (
+          ) : (
             <>
               <Zone src={src} color={sleeveColor} clip="polygon(0% 4%, 31% 9%, 27% 47%, 0% 47%)" />
               <Zone src={src} color={sleeveColor} clip="polygon(100% 4%, 69% 9%, 73% 47%, 100% 47%)" />
             </>
-          ) : null}
-          <Zone src={src} color={trimColor} clip="polygon(0% 41%, 28% 41%, 27% 47%, 0% 47%)" />
-          <Zone src={src} color={trimColor} clip="polygon(100% 41%, 72% 41%, 73% 47%, 100% 47%)" />
+          )}
+
         </>
       )}
 
