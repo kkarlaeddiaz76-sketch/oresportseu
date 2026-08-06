@@ -8,6 +8,7 @@ interface Props {
   jerseyColor: string;
   sleeveColor: string;
   trimColor: string;
+  collarColor?: string;
   shortsColor?: string;
   teamName: string;
   playerName: string;
