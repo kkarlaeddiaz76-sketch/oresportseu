@@ -707,7 +707,6 @@ function DesignerPage() {
                     shortsColor={shortsColor}
                     trimColor={accent}
                     collarColor={collarColor}
-                  collarColor={collarColor}
                     teamName={teamName}
                     playerName={playerName}
                     number={number}
