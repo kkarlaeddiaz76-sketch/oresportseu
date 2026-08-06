@@ -108,6 +108,7 @@ function bodyFill(template: Template, primary: string, secondary: string, accent
 export function PhotoMockup({
   sport, cut, view, template = "solid",
   jerseyColor, sleeveColor, trimColor, collarColor, shortsColor = "#000000",
+  bodySecondary,
   teamName, playerName, number,
   fontFront, fontBack,
   teamNameSize, playerNameSize, numberSize,
@@ -117,7 +118,7 @@ export function PhotoMockup({
   const src = baseImage(sport, cut, view);
   const collarSrc = collarImage(sport, cut, view);
   const isSet = sport === "basket";
-  const body = bodyFill(template, jerseyColor, sleeveColor, trimColor);
+  const body = bodyFill(template, jerseyColor, bodySecondary ?? sleeveColor, trimColor);
   const patterned = template === "gradient" || template === "camo" || template === "geometric";
   const raglan = template === "raglan";
 
