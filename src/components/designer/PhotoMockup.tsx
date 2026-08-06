@@ -154,7 +154,7 @@ export function PhotoMockup({
       )}
 
       {/* 1a. Collar: exact mask traced from the real photo, keeps its own shadows */}
-      <Zone src={collarSrc} color={trimColor} />
+      <Zone src={collarSrc} color={collarColor ?? trimColor} />
 
 
 
