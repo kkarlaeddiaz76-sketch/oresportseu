@@ -436,11 +436,13 @@ function DesignerPage() {
                     </>
                   ) : (
                     <div className="grid grid-cols-2 gap-3">
-                      <ColorField label="Principal" value={primary} onChange={setPrimary} />
-                      <ColorField label="Mangas" value={secondary} onChange={setSecondary} />
+                      <ColorField label="Color principal" value={primary} onChange={setPrimary} />
+                      <ColorField label="Color secundario" value={secondary} onChange={setSecondary} />
+                      <ColorField label="Color de mangas" value={sleeveColor} onChange={setSleeveColor} />
                     </div>
                   )}
                 </Panel>
+
 
                 <Panel title="Tela">
                   <div className="grid grid-cols-2 gap-2">
