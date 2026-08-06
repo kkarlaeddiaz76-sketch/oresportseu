@@ -480,25 +480,12 @@ function DesignerPage() {
                       />
                     ))}
                   </div>
-                  <div className="mt-5 border-t border-black/10 pt-4">
-                  <ColorField label="Color de ribetes / puños" value={accent} onChange={setAccent} />
-                  <p className="mt-2 text-[11px] text-black/60">
+                  <p className="mt-3 text-[11px] text-black/60">
                     El color se aplica exactamente sobre el cuello real de la prenda, conservando sus sombras y pliegues.
                   </p>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {TEXT_COLORS.map((t) => (
-                      <button
-                        key={t.c}
-                        type="button"
-                        title={t.n}
-                        onClick={() => setAccent(t.c)}
-                        className={`h-7 w-7 rounded-full border-2 transition ${accent.toUpperCase() === t.c.toUpperCase() ? "border-primary ring-2 ring-primary/40 scale-110" : "border-black/30 hover:border-black"}`}
-                        style={{ background: t.c }}
-                      />
-                    ))}
-                  </div>
                   </div>
                 </Panel>
+
               </TabsContent>
 
               {/* STEP 4 — Personalización / textos */}
