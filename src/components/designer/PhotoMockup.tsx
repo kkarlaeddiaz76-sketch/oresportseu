@@ -144,14 +144,13 @@ export function PhotoMockup({
               <Zone src={src} color={sleeveColor} clip="polygon(0% 4%, 44% 6%, 30% 22%, 27% 47%, 0% 47%)" />
               <Zone src={src} color={sleeveColor} clip="polygon(100% 4%, 56% 6%, 70% 22%, 73% 47%, 100% 47%)" />
             </>
-          ) : !patterned ? (
+          ) : (
             <>
               <Zone src={src} color={sleeveColor} clip="polygon(0% 4%, 31% 9%, 27% 47%, 0% 47%)" />
               <Zone src={src} color={sleeveColor} clip="polygon(100% 4%, 69% 9%, 73% 47%, 100% 47%)" />
             </>
-          ) : null}
-          <Zone src={src} color={trimColor} clip="polygon(0% 41%, 28% 41%, 27% 47%, 0% 47%)" />
-          <Zone src={src} color={trimColor} clip="polygon(100% 41%, 72% 41%, 73% 47%, 100% 47%)" />
+          )}
+
         </>
       )}
 
