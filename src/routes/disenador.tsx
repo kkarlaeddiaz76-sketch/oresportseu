@@ -72,6 +72,7 @@ function DesignerPage() {
   // Basketball-specific extra zones
   const [shortsColor, setShortsColor] = useState("#000000");
   const [sleeveColor, setSleeveColor] = useState("#FF0000");
+  const [collarColor, setCollarColor] = useState("#000000");
   const [showSleeves, setShowSleeves] = useState(false);
   const [teamName, setTeamName] = useState("Monarcas");
   const [playerName, setPlayerName] = useState("PEREZ");
@@ -238,6 +239,7 @@ function DesignerPage() {
                   sleeveColor={sport === "basket" ? sleeveColor : secondary}
                   shortsColor={shortsColor}
                   trimColor={accent}
+                  collarColor={collarColor}
                   teamName={teamName}
                   playerName={playerName}
                   number={number}
@@ -463,7 +465,21 @@ function DesignerPage() {
               {/* STEP 3 — Cuello y costuras */}
               <TabsContent value="step3" className="mt-4 space-y-6">
                 <Panel title="Cuello y Costuras">
-                  <ColorField label="Color del cuello y ribetes" value={accent} onChange={setAccent} />
+                  <ColorField label="Color del cuello" value={collarColor} onChange={setCollarColor} />
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {TEXT_COLORS.map((t) => (
+                      <button
+                        key={`collar-${t.c}`}
+                        type="button"
+                        title={t.n}
+                        onClick={() => setCollarColor(t.c)}
+                        className={`h-7 w-7 rounded-full border-2 transition ${collarColor.toUpperCase() === t.c.toUpperCase() ? "border-primary ring-2 ring-primary/40 scale-110" : "border-black/30 hover:border-black"}`}
+                        style={{ background: t.c }}
+                      />
+                    ))}
+                  </div>
+                  <div className="mt-5 border-t border-black/10 pt-4">
+                  <ColorField label="Color de ribetes / puños" value={accent} onChange={setAccent} />
                   <p className="mt-2 text-[11px] text-black/60">
                     El color se aplica exactamente sobre el cuello real de la prenda, conservando sus sombras y pliegues.
                   </p>
@@ -478,6 +494,7 @@ function DesignerPage() {
                         style={{ background: t.c }}
                       />
                     ))}
+                  </div>
                   </div>
                 </Panel>
               </TabsContent>
@@ -689,6 +706,8 @@ function DesignerPage() {
                     sleeveColor={sport === "basket" ? sleeveColor : secondary}
                     shortsColor={shortsColor}
                     trimColor={accent}
+                    collarColor={collarColor}
+                  collarColor={collarColor}
                     teamName={teamName}
                     playerName={playerName}
                     number={number}
