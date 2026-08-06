@@ -7,6 +7,7 @@ interface Props {
   template?: Template;
   jerseyColor: string;
   sleeveColor: string;
+  bodySecondary?: string;
   trimColor: string;
   collarColor?: string;
   shortsColor?: string;
