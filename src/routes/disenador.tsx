@@ -483,7 +483,6 @@ function DesignerPage() {
                   <p className="mt-3 text-[11px] text-black/60">
                     El color se aplica exactamente sobre el cuello real de la prenda, conservando sus sombras y pliegues.
                   </p>
-                  </div>
                 </Panel>
 
               </TabsContent>
