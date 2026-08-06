@@ -8,6 +8,7 @@ interface Props {
   jerseyColor: string;
   sleeveColor: string;
   trimColor: string;
+  collarColor?: string;
   shortsColor?: string;
   teamName: string;
   playerName: string;
@@ -106,7 +107,7 @@ function bodyFill(template: Template, primary: string, secondary: string, accent
 
 export function PhotoMockup({
   sport, cut, view, template = "solid",
-  jerseyColor, sleeveColor, trimColor, shortsColor = "#000000",
+  jerseyColor, sleeveColor, trimColor, collarColor, shortsColor = "#000000",
   teamName, playerName, number,
   fontFront, fontBack,
   teamNameSize, playerNameSize, numberSize,
@@ -153,7 +154,7 @@ export function PhotoMockup({
       )}
 
       {/* 1a. Collar: exact mask traced from the real photo, keeps its own shadows */}
-      <Zone src={collarSrc} color={trimColor} />
+      <Zone src={collarSrc} color={collarColor ?? trimColor} />
 
 
 
