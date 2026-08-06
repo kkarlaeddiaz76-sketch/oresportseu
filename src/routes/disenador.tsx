@@ -236,9 +236,10 @@ function DesignerPage() {
                   view={view}
                   template={template}
                   jerseyColor={primary}
-                  sleeveColor={sport === "basket" ? sleeveColor : secondary}
+                  sleeveColor={sleeveColor}
+                  bodySecondary={secondary}
                   shortsColor={shortsColor}
-                  trimColor={accent}
+                  trimColor={secondary}
                   collarColor={collarColor}
                   teamName={teamName}
                   playerName={playerName}
