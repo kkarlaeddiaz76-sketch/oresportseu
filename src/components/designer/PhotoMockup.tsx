@@ -107,7 +107,7 @@ function bodyFill(template: Template, primary: string, secondary: string, accent
 
 export function PhotoMockup({
   sport, cut, view, template = "solid",
-  jerseyColor, sleeveColor, trimColor, shortsColor = "#000000",
+  jerseyColor, sleeveColor, trimColor, collarColor, shortsColor = "#000000",
   teamName, playerName, number,
   fontFront, fontBack,
   teamNameSize, playerNameSize, numberSize,
