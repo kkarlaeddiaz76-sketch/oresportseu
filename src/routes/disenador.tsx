@@ -90,6 +90,7 @@ function DesignerPage() {
   const [numberColor, setNumberColor] = useState("#FFFFFF");
   const [showSummary, setShowSummary] = useState(false);
   const [showFullPreview, setShowFullPreview] = useState(false);
+  const [previewMode, setPreviewMode] = useState<"2d" | "3d">("2d");
   const { url: logoUrl, set: setLogo } = useObjectUrl();
 
 
