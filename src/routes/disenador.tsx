@@ -313,9 +313,12 @@ function DesignerPage() {
                 </div>
               )}
             </div>
-            <p className="mt-4 text-center text-xs text-black/60">
-              {logoUrl ? "Arrastra el logo sobre la camisa. La posición se guarda por vista (frente/espalda)." : "Vista previa aproximada. La producción final se ajusta al patrón elegido."}
-            </p>
+            )}
+            {previewMode === "2d" && (
+              <p className="mt-4 text-center text-xs text-black/60">
+                {logoUrl ? "Arrastra el logo sobre la camisa. La posición se guarda por vista (frente/espalda)." : "Vista previa aproximada. La producción final se ajusta al patrón elegido."}
+              </p>
+            )}
           </div>
 
           {/* CONTROLS */}
