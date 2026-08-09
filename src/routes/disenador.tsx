@@ -199,27 +199,77 @@ function DesignerPage() {
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <div className="flex gap-1 rounded-full border border-black p-1">
                 <button
-                  onClick={() => { setView("front"); setLogoSelected(false); }}
-                  className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase transition ${view === "front" ? "bg-black text-white" : "text-black"}`}
+                  onClick={() => setPreviewMode("2d")}
+                  className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase transition ${previewMode === "2d" ? "bg-primary text-white" : "text-black"}`}
                 >
-                  Frente
+                  2D
                 </button>
                 <button
-                  onClick={() => { setView("back"); setLogoSelected(false); }}
-                  className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase transition ${view === "back" ? "bg-black text-white" : "text-black"}`}
+                  onClick={() => { setPreviewMode("3d"); setLogoSelected(false); }}
+                  className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase transition ${previewMode === "3d" ? "bg-primary text-white" : "text-black"}`}
                 >
-                  Espalda
+                  3D
                 </button>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => { setView((v) => (v === "front" ? "back" : "front")); setLogoSelected(false); }}
-                className="gap-2 border-black text-black hover:bg-black hover:text-white"
-              >
-                <RotateCw className="h-4 w-4" /> Girar
-              </Button>
+              {previewMode === "2d" && (
+                <>
+                  <div className="flex gap-1 rounded-full border border-black p-1">
+                    <button
+                      onClick={() => { setView("front"); setLogoSelected(false); }}
+                      className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase transition ${view === "front" ? "bg-black text-white" : "text-black"}`}
+                    >
+                      Frente
+                    </button>
+                    <button
+                      onClick={() => { setView("back"); setLogoSelected(false); }}
+                      className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase transition ${view === "back" ? "bg-black text-white" : "text-black"}`}
+                    >
+                      Espalda
+                    </button>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => { setView((v) => (v === "front" ? "back" : "front")); setLogoSelected(false); }}
+                    className="gap-2 border-black text-black hover:bg-black hover:text-white"
+                  >
+                    <RotateCw className="h-4 w-4" /> Girar
+                  </Button>
+                </>
+              )}
             </div>
+
+            {previewMode === "3d" ? (
+              <div className="rounded-xl bg-gradient-to-b from-neutral-100 to-neutral-200 p-3 lg:p-6">
+                <div
+                  className="mx-auto w-full transition-transform"
+                  style={{ transform: `scale(${category === "kids" ? 0.84 : category === "women" ? 0.94 : 1})` }}
+                >
+                  <Jersey3DView
+                    sport={sport}
+                    cut={cut}
+                    template={template}
+                    jerseyColor={primary}
+                    sleeveColor={sleeveColor}
+                    bodySecondary={secondary}
+                    shortsColor={shortsColor}
+                    trimColor={secondary}
+                    collarColor={collarColor}
+                    teamName={teamName}
+                    playerName={playerName}
+                    number={number}
+                    fontFront={fontFrontFamily}
+                    fontBack={fontBackFamily}
+                    teamNameSize={teamNameSize}
+                    playerNameSize={playerNameSize}
+                    numberSize={numberSize}
+                    teamNameColor={teamNameColor}
+                    playerNameColor={playerNameColor}
+                    numberColor={numberColor}
+                  />
+                </div>
+              </div>
+            ) : (
             <div
               ref={previewRef}
               className="relative mx-auto flex w-full max-w-md items-center justify-center overflow-visible rounded-xl bg-gradient-to-b from-neutral-100 to-neutral-200 p-3 select-none lg:p-6 transition-all"
