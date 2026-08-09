@@ -14,6 +14,7 @@ import {
   useObjectUrl,
 } from "@/components/designer/JerseyCanvas";
 import { PhotoMockup } from "@/components/designer/PhotoMockup";
+import { Jersey3DView } from "@/components/designer/Jersey3DView";
 
 
 
