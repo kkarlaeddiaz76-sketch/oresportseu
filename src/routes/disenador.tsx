@@ -14,6 +14,7 @@ import {
   useObjectUrl,
 } from "@/components/designer/JerseyCanvas";
 import { PhotoMockup } from "@/components/designer/PhotoMockup";
+import { Jersey3DView } from "@/components/designer/Jersey3DView";
 
 
 
@@ -90,6 +91,7 @@ function DesignerPage() {
   const [numberColor, setNumberColor] = useState("#FFFFFF");
   const [showSummary, setShowSummary] = useState(false);
   const [showFullPreview, setShowFullPreview] = useState(false);
+  const [previewMode, setPreviewMode] = useState<"2d" | "3d">("2d");
   const { url: logoUrl, set: setLogo } = useObjectUrl();
 
 
@@ -198,27 +200,77 @@ function DesignerPage() {
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <div className="flex gap-1 rounded-full border border-black p-1">
                 <button
-                  onClick={() => { setView("front"); setLogoSelected(false); }}
-                  className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase transition ${view === "front" ? "bg-black text-white" : "text-black"}`}
+                  onClick={() => setPreviewMode("2d")}
+                  className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase transition ${previewMode === "2d" ? "bg-primary text-white" : "text-black"}`}
                 >
-                  Frente
+                  2D
                 </button>
                 <button
-                  onClick={() => { setView("back"); setLogoSelected(false); }}
-                  className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase transition ${view === "back" ? "bg-black text-white" : "text-black"}`}
+                  onClick={() => { setPreviewMode("3d"); setLogoSelected(false); }}
+                  className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase transition ${previewMode === "3d" ? "bg-primary text-white" : "text-black"}`}
                 >
-                  Espalda
+                  3D
                 </button>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => { setView((v) => (v === "front" ? "back" : "front")); setLogoSelected(false); }}
-                className="gap-2 border-black text-black hover:bg-black hover:text-white"
-              >
-                <RotateCw className="h-4 w-4" /> Girar
-              </Button>
+              {previewMode === "2d" && (
+                <>
+                  <div className="flex gap-1 rounded-full border border-black p-1">
+                    <button
+                      onClick={() => { setView("front"); setLogoSelected(false); }}
+                      className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase transition ${view === "front" ? "bg-black text-white" : "text-black"}`}
+                    >
+                      Frente
+                    </button>
+                    <button
+                      onClick={() => { setView("back"); setLogoSelected(false); }}
+                      className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase transition ${view === "back" ? "bg-black text-white" : "text-black"}`}
+                    >
+                      Espalda
+                    </button>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => { setView((v) => (v === "front" ? "back" : "front")); setLogoSelected(false); }}
+                    className="gap-2 border-black text-black hover:bg-black hover:text-white"
+                  >
+                    <RotateCw className="h-4 w-4" /> Girar
+                  </Button>
+                </>
+              )}
             </div>
+
+            {previewMode === "3d" ? (
+              <div className="rounded-xl bg-gradient-to-b from-neutral-100 to-neutral-200 p-3 lg:p-6">
+                <div
+                  className="mx-auto w-full transition-transform"
+                  style={{ transform: `scale(${category === "kids" ? 0.84 : category === "women" ? 0.94 : 1})` }}
+                >
+                  <Jersey3DView
+                    sport={sport}
+                    cut={cut}
+                    template={template}
+                    jerseyColor={primary}
+                    sleeveColor={sleeveColor}
+                    bodySecondary={secondary}
+                    shortsColor={shortsColor}
+                    trimColor={secondary}
+                    collarColor={collarColor}
+                    teamName={teamName}
+                    playerName={playerName}
+                    number={number}
+                    fontFront={fontFrontFamily}
+                    fontBack={fontBackFamily}
+                    teamNameSize={teamNameSize}
+                    playerNameSize={playerNameSize}
+                    numberSize={numberSize}
+                    teamNameColor={teamNameColor}
+                    playerNameColor={playerNameColor}
+                    numberColor={numberColor}
+                  />
+                </div>
+              </div>
+            ) : (
             <div
               ref={previewRef}
               className="relative mx-auto flex w-full max-w-md items-center justify-center overflow-visible rounded-xl bg-gradient-to-b from-neutral-100 to-neutral-200 p-3 select-none lg:p-6 transition-all"
@@ -312,13 +364,36 @@ function DesignerPage() {
                 </div>
               )}
             </div>
-            <p className="mt-4 text-center text-xs text-black/60">
-              {logoUrl ? "Arrastra el logo sobre la camisa. La posición se guarda por vista (frente/espalda)." : "Vista previa aproximada. La producción final se ajusta al patrón elegido."}
-            </p>
+            )}
+            {previewMode === "2d" && (
+              <p className="mt-4 text-center text-xs text-black/60">
+                {logoUrl ? "Arrastra el logo sobre la camisa. La posición se guarda por vista (frente/espalda)." : "Vista previa aproximada. La producción final se ajusta al patrón elegido."}
+              </p>
+            )}
           </div>
 
           {/* CONTROLS */}
           <div className="lg:order-1">
+            {/* Resumen rápido de la configuración actual */}
+            <div className="mb-3 flex flex-wrap gap-1.5">
+              {[
+                SPORTS.find((s) => s.v === sport)?.label,
+                catLabel,
+                { crew: "Cuello Redondo", vneck: "Cuello en V", btn2: "2 Botones", btn6: "6 Botones" }[cut],
+                TEMPLATES.find((t) => t.id === template)?.label,
+                `Talla ${designSize}`,
+              ].filter(Boolean).map((chip) => (
+                <span key={chip as string} className="rounded-full border border-black/15 bg-black/5 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-black">
+                  {chip}
+                </span>
+              ))}
+              <span className="flex items-center gap-1 rounded-full border border-black/15 px-3 py-1 text-[11px] font-bold uppercase text-black">
+                <span className="h-3 w-3 rounded-full border border-black/20" style={{ background: primary }} />
+                <span className="h-3 w-3 rounded-full border border-black/20" style={{ background: secondary }} />
+                <span className="h-3 w-3 rounded-full border border-black/20" style={{ background: collarColor }} />
+              </span>
+            </div>
+
             <Button
               variant="outline"
               onClick={() => setShowFullPreview(true)}
@@ -328,12 +403,24 @@ function DesignerPage() {
             </Button>
 
             <Tabs defaultValue="step1" className="w-full">
-              <TabsList className="grid w-full grid-cols-4 rounded-xl border-2 border-black bg-white p-1">
-                <TabsTrigger value="step1" className="rounded-lg text-[11px] font-black uppercase data-[state=active]:bg-primary data-[state=active]:text-white">1. Deporte</TabsTrigger>
-                <TabsTrigger value="step2" className="rounded-lg text-[11px] font-black uppercase data-[state=active]:bg-primary data-[state=active]:text-white">2. Diseño</TabsTrigger>
-                <TabsTrigger value="step3" className="rounded-lg text-[11px] font-black uppercase data-[state=active]:bg-primary data-[state=active]:text-white">3. Cuello</TabsTrigger>
-                <TabsTrigger value="step4" className="rounded-lg text-[11px] font-black uppercase data-[state=active]:bg-primary data-[state=active]:text-white">4. Textos</TabsTrigger>
+              <TabsList className="sticky top-16 z-10 grid h-auto w-full grid-cols-4 gap-1 rounded-xl border-2 border-black bg-white p-1 lg:top-24">
+                {[
+                  { v: "step1", n: "1", t: "Deporte", s: "y corte" },
+                  { v: "step2", n: "2", t: "Diseño", s: "y colores" },
+                  { v: "step3", n: "3", t: "Cuello", s: "y costuras" },
+                  { v: "step4", n: "4", t: "Textos", s: "y logo" },
+                ].map((s) => (
+                  <TabsTrigger
+                    key={s.v}
+                    value={s.v}
+                    className="flex-col gap-0 rounded-lg py-2 leading-tight data-[state=active]:bg-primary data-[state=active]:text-white"
+                  >
+                    <span className="text-[11px] font-black uppercase">{s.n}. {s.t}</span>
+                    <span className="text-[9px] font-semibold uppercase opacity-70">{s.s}</span>
+                  </TabsTrigger>
+                ))}
               </TabsList>
+
 
               {/* STEP 1 — Deporte y corte */}
               <TabsContent value="step1" className="mt-4 space-y-6">
