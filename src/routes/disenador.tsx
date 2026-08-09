@@ -374,6 +374,26 @@ function DesignerPage() {
 
           {/* CONTROLS */}
           <div className="lg:order-1">
+            {/* Resumen rápido de la configuración actual */}
+            <div className="mb-3 flex flex-wrap gap-1.5">
+              {[
+                SPORTS.find((s) => s.v === sport)?.label,
+                catLabel,
+                { crew: "Cuello Redondo", vneck: "Cuello en V", btn2: "2 Botones", btn6: "6 Botones" }[cut],
+                TEMPLATES.find((t) => t.id === template)?.label,
+                `Talla ${designSize}`,
+              ].filter(Boolean).map((chip) => (
+                <span key={chip as string} className="rounded-full border border-black/15 bg-black/5 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-black">
+                  {chip}
+                </span>
+              ))}
+              <span className="flex items-center gap-1 rounded-full border border-black/15 px-3 py-1 text-[11px] font-bold uppercase text-black">
+                <span className="h-3 w-3 rounded-full border border-black/20" style={{ background: primary }} />
+                <span className="h-3 w-3 rounded-full border border-black/20" style={{ background: secondary }} />
+                <span className="h-3 w-3 rounded-full border border-black/20" style={{ background: collarColor }} />
+              </span>
+            </div>
+
             <Button
               variant="outline"
               onClick={() => setShowFullPreview(true)}
@@ -383,12 +403,24 @@ function DesignerPage() {
             </Button>
 
             <Tabs defaultValue="step1" className="w-full">
-              <TabsList className="grid w-full grid-cols-4 rounded-xl border-2 border-black bg-white p-1">
-                <TabsTrigger value="step1" className="rounded-lg text-[11px] font-black uppercase data-[state=active]:bg-primary data-[state=active]:text-white">1. Deporte</TabsTrigger>
-                <TabsTrigger value="step2" className="rounded-lg text-[11px] font-black uppercase data-[state=active]:bg-primary data-[state=active]:text-white">2. Diseño</TabsTrigger>
-                <TabsTrigger value="step3" className="rounded-lg text-[11px] font-black uppercase data-[state=active]:bg-primary data-[state=active]:text-white">3. Cuello</TabsTrigger>
-                <TabsTrigger value="step4" className="rounded-lg text-[11px] font-black uppercase data-[state=active]:bg-primary data-[state=active]:text-white">4. Textos</TabsTrigger>
+              <TabsList className="sticky top-16 z-10 grid h-auto w-full grid-cols-4 gap-1 rounded-xl border-2 border-black bg-white p-1 lg:top-24">
+                {[
+                  { v: "step1", n: "1", t: "Deporte", s: "y corte" },
+                  { v: "step2", n: "2", t: "Diseño", s: "y colores" },
+                  { v: "step3", n: "3", t: "Cuello", s: "y costuras" },
+                  { v: "step4", n: "4", t: "Textos", s: "y logo" },
+                ].map((s) => (
+                  <TabsTrigger
+                    key={s.v}
+                    value={s.v}
+                    className="flex-col gap-0 rounded-lg py-2 leading-tight data-[state=active]:bg-primary data-[state=active]:text-white"
+                  >
+                    <span className="text-[11px] font-black uppercase">{s.n}. {s.t}</span>
+                    <span className="text-[9px] font-semibold uppercase opacity-70">{s.s}</span>
+                  </TabsTrigger>
+                ))}
               </TabsList>
+
 
               {/* STEP 1 — Deporte y corte */}
               <TabsContent value="step1" className="mt-4 space-y-6">
