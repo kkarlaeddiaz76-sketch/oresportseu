@@ -6,7 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Upload, RotateCw, Trash2, Plus, Truck, Minus, ShoppingBag, MessageCircle, Eye } from "lucide-react";
+import { Upload, RotateCw, Trash2, Plus, Truck, Minus, ShoppingBag, MessageCircle, Eye, Download, FileText } from "lucide-react";
+import { downloadDesignPng, downloadDesignPdf } from "@/lib/design-export";
+import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   FONT_OPTIONS, FONT_CATEGORY_LABEL, TEMPLATES,
@@ -181,6 +183,29 @@ function DesignerPage() {
   const quoteMsg = `Hola KitCraft, quiero cotizar un pedido:%0ADeporte: ${sport}%0ACategoría: ${catLabel}%0AEquipo: ${teamName}%0ATela: ${fabric}%0AJugadores: ${total}`;
 
   const logoSizePx = 80 * currentPos.scale;
+
+  const exportProps = {
+    sport,
+    cut,
+    template,
+    jerseyColor: primary,
+    sleeveColor,
+    bodySecondary: secondary,
+    shortsColor,
+    trimColor: secondary,
+    collarColor,
+    teamName,
+    playerName,
+    number,
+    fontFront: fontFrontFamily,
+    fontBack: fontBackFamily,
+    teamNameSize,
+    playerNameSize,
+    numberSize,
+    teamNameColor,
+    playerNameColor,
+    numberColor,
+  };
 
   return (
     <TooltipProvider>
@@ -370,7 +395,39 @@ function DesignerPage() {
                 {logoUrl ? "Arrastra el logo sobre la camisa. La posición se guarda por vista (frente/espalda)." : "Vista previa aproximada. La producción final se ajusta al patrón elegido."}
               </p>
             )}
+
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  toast.promise(downloadDesignPng(exportProps), {
+                    loading: "Generando PNG…",
+                    success: "PNG descargado",
+                    error: "No se pudo generar el PNG",
+                  });
+                }}
+                className="gap-2 border-black text-black hover:bg-black hover:text-white"
+              >
+                <Download className="h-4 w-4" /> Descargar PNG
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  toast.promise(downloadDesignPdf(exportProps), {
+                    loading: "Generando PDF…",
+                    success: "PDF descargado",
+                    error: "No se pudo generar el PDF",
+                  });
+                }}
+                className="gap-2 border-black text-black hover:bg-black hover:text-white"
+              >
+                <FileText className="h-4 w-4" /> Descargar PDF
+              </Button>
+            </div>
           </div>
+
 
           {/* CONTROLS */}
           <div className="lg:order-1">
